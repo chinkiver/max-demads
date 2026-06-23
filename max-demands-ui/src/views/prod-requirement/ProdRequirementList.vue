@@ -55,13 +55,21 @@
             {{ dictStore.getDict('prod_req_status').find(d => d.dictCode === row.status)?.dictName || row.status }}
           </template>
         </el-table-column>
-        <el-table-column prop="devBranchName" label="关联开发分支" show-overflow-tooltip :width="colWidths.devBranchName" />
+        <el-table-column prop="devBranchName" label="关联开发分支" show-overflow-tooltip :width="colWidths.devBranchName">
+          <template #default="{ row }">
+            {{ row.devBranchName || '-' }}
+          </template>
+        </el-table-column>
         <el-table-column prop="devBranchStatus" label="开发分支状态" :width="colWidths.devBranchStatus">
           <template #default="{ row }">
             {{ dictStore.getDict('branch_status').find(d => d.dictCode === row.devBranchStatus)?.dictName || row.devBranchStatus || '-' }}
           </template>
         </el-table-column>
-        <el-table-column prop="verifyBranchName" label="验证分支" show-overflow-tooltip :width="colWidths.verifyBranchName" />
+        <el-table-column prop="verifyBranchName" label="验证分支" show-overflow-tooltip :width="colWidths.verifyBranchName">
+          <template #default="{ row }">
+            {{ row.verifyBranchName || '-' }}
+          </template>
+        </el-table-column>
         <el-table-column prop="verifyBranchStatus" label="验证分支状态" :width="colWidths.verifyBranchStatus">
           <template #default="{ row }">
             {{ dictStore.getDict('branch_status').find(d => d.dictCode === row.verifyBranchStatus)?.dictName || row.verifyBranchStatus || '-' }}
