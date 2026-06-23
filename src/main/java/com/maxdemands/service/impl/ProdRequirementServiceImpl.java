@@ -124,6 +124,7 @@ public class ProdRequirementServiceImpl extends ServiceImpl<ProdRequirementMappe
         existing.setSystemId(dto.getSystemId());
         existing.setDeveloper(dto.getDeveloper());
         existing.setStatus(dto.getStatus());
+        existing.setBizReqId(dto.getBizReqId());
         existing.setBranchAction(dto.getBranchAction());
 
         if ("create".equals(dto.getBranchAction()) && existing.getDevBranchId() == null) {
