@@ -47,23 +47,45 @@
   border: none;
 }
 
-/* 表格 */
+/* 表格 —— 紧凑模式 */
 .el-table {
   border-radius: 12px;
   overflow: hidden;
   --el-table-header-bg-color: #f9fafb;
   --el-table-header-text-color: #6b7280;
+  font-size: 13px;
 }
 
 .el-table th.el-table__cell {
   font-weight: 600;
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  padding: 8px 10px !important;
+  height: 36px !important;
+}
+
+.el-table td.el-table__cell {
+  padding: 6px 10px !important;
+  height: 40px !important;
+}
+
+.el-table .cell {
+  line-height: 1.3 !important;
+  padding: 0 2px !important;
 }
 
 .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell {
   background-color: #f9fafb;
+}
+
+.el-table .el-button + .el-button {
+  margin-left: 6px !important;
+}
+
+.el-table .el-button--small {
+  padding: 4px 8px !important;
+  font-size: 12px !important;
 }
 
 /* 分页 */
@@ -107,8 +129,8 @@
 /* Card header */
 .el-card__header {
   border-bottom: 1px solid #f3f4f6;
-  padding: 20px 24px;
-  font-size: 16px;
+  padding: 14px 20px;
+  font-size: 15px;
   font-weight: 600;
   color: #111827;
 }
@@ -118,27 +140,27 @@
   border-radius: 8px;
 }
 
-/* 页面通用 */
+/* 页面通用 —— 紧凑 */
 .page-card {
   background: white;
   border-radius: var(--card-radius);
   box-shadow: var(--card-shadow);
-  padding: 24px;
+  padding: 16px 20px;
 }
 
 .page-header {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .page-header-title {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   color: #111827;
-  margin: 0 0 6px 0;
+  margin: 0 0 4px 0;
 }
 
 .page-header-desc {
-  font-size: 14px;
+  font-size: 13px;
   color: #6b7280;
   margin: 0;
 }
@@ -147,9 +169,67 @@
   background: #6366f1;
   border-color: #6366f1;
   border-radius: 8px;
+  padding: 6px 14px !important;
+  font-size: 13px !important;
 }
 
 .page-action-btn:hover {
   background: #4f46e5;
   border-color: #4f46e5;
+}
+
+/* 搜索表单紧凑（覆盖页面内联样式） */
+.page-card .el-form--inline,
+.page-card > .el-form,
+.search-form {
+  margin-bottom: 10px !important;
+  padding-bottom: 0 !important;
+}
+
+.page-card .el-form--inline .el-form-item,
+.page-card > .el-form .el-form-item,
+.search-form .el-form-item {
+  margin-bottom: 8px !important;
+  margin-right: 10px !important;
+}
+
+.page-card .el-form--inline .el-form-item__label,
+.search-form .el-form-item__label {
+  font-size: 13px;
+  padding: 0 6px 0 0 !important;
+}
+
+.page-card .el-form--inline .el-input,
+.page-card .el-form--inline .el-select,
+.search-form .el-input,
+.search-form .el-select {
+  width: 170px;
+}
+
+.page-card .el-form--inline .el-button,
+.search-form .el-button {
+  padding: 5px 12px !important;
+  font-size: 13px !important;
+}
+
+/* 工具栏紧凑 */
+.table-toolbar,
+.el-card__header > div:only-child {
+  margin-bottom: 10px !important;
+}
+
+.table-toolbar .el-button,
+.el-card__header .el-button {
+  padding: 5px 12px !important;
+  font-size: 13px !important;
+}
+
+/* 分页紧凑 */
+.el-pagination {
+  margin-top: 10px !important;
+  font-size: 13px;
+}
+
+.el-pagination .el-select .el-input {
+  width: 100px;
 }
