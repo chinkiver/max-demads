@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="page-header">
-      <h1 class="page-header-title">业务需求管理</h1>
+      <h1 class="page-header-title">需求管理</h1>
       <p class="page-header-desc">管理业务需求，跟踪交付进度</p>
     </div>
     <el-card class="page-card">

@@ -13,7 +13,7 @@
         border
         default-expand-all
       >
-        <el-table-column label="层级/名称" min-width="320">
+        <el-table-column label="层级/名称" min-width="300">
           <template #default="{ row }">
             <el-tag :type="getTypeTag(row.type)" size="small" style="margin-right: 8px;">
               {{ typeLabel[row.type] }}
@@ -21,7 +21,7 @@
             <span>{{ row.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="状态" width="120">
+        <el-table-column label="状态" width="110">
           <template #default="{ row }">
             <el-tag v-if="row.status" :type="getStatusTag(row.type, row.status)" size="small">
               {{ row.statusName }}
@@ -29,9 +29,16 @@
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column label="补充信息" min-width="200">
+        <el-table-column label="负责人/开发人" width="130">
           <template #default="{ row }">
-            <span v-if="row.type === 'prod' && row.systemName">所属系统：{{ row.systemName }}</span>
+            <el-tag v-if="row.type === 'biz' && row.owner" type="info" size="small">{{ row.owner }}</el-tag>
+            <el-tag v-else-if="row.type === 'prod' && row.developer" type="info" size="small">{{ row.developer }}</el-tag>
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="所属系统" width="140">
+          <template #default="{ row }">
+            <el-tag v-if="row.type === 'prod' && row.systemName" type="warning" size="small">{{ row.systemName }}</el-tag>
             <span v-else>-</span>
           </template>
         </el-table-column>
@@ -115,6 +122,7 @@ const buildTree = (list) => {
       id: `biz-${biz.id}`,
       type: 'biz',
       name: `${biz.reqCode}-${biz.reqName}`,
+      owner: biz.owner,
       status: biz.status,
       statusName: biz.statusName,
       children: (biz.prodRequirements || []).map(prod => {
@@ -122,6 +130,7 @@ const buildTree = (list) => {
           id: `prod-${prod.id}`,
           type: 'prod',
           name: `${prod.prodReqCode}-${prod.prodReqName}`,
+          developer: prod.developer,
           status: prod.status,
           statusName: prod.statusName,
           systemName: prod.systemName,

@@ -138,6 +138,7 @@ public class BizRequirementServiceImpl extends ServiceImpl<BizRequirementMapper,
             vo.setId(biz.getId());
             vo.setReqCode(biz.getReqCode());
             vo.setReqName(biz.getReqName());
+            vo.setOwner(biz.getOwner());
             vo.setStatus(biz.getStatus());
             vo.setStatusName(dictService.getDictName("biz_req_status", biz.getStatus()));
             vo.setProdRequirements(prodList.stream()
@@ -147,6 +148,7 @@ public class BizRequirementServiceImpl extends ServiceImpl<BizRequirementMapper,
                         prod.setId(p.getId());
                         prod.setProdReqCode(p.getProdReqCode());
                         prod.setProdReqName(p.getProdReqName());
+                        prod.setDeveloper(p.getDeveloper());
                         prod.setStatus(p.getStatus());
                         prod.setStatusName(dictService.getDictName("prod_req_status", p.getStatus()));
                         prod.setSystemId(p.getSystemId());
