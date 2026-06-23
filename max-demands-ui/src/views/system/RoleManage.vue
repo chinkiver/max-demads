@@ -10,11 +10,11 @@
         </div>
       </template>
 
-      <el-table :data="list" v-loading="loading" border>
-        <el-table-column prop="roleCode" label="角色编码" />
-        <el-table-column prop="roleName" label="角色名称" />
-        <el-table-column prop="description" label="描述" show-overflow-tooltip />
-        <el-table-column label="操作" width="150">
+      <el-table :data="list" v-loading="loading" border @header-dragend="handleHeaderDragend">
+        <el-table-column prop="roleCode" label="角色编码" :width="colWidths.roleCode" />
+        <el-table-column prop="roleName" label="角色名称" :width="colWidths.roleName" />
+        <el-table-column prop="description" label="描述" :width="colWidths.description" />
+        <el-table-column label="操作" width="150" :resizable="false">
           <template #default="{ row }">
             <el-button type="primary" link @click="handleConfigPermission(row)" v-if="authStore.userInfo?.permissions?.includes('sys:role:edit')">配置权限</el-button>
           </template>
@@ -45,9 +45,20 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
+import { useColumnWidth } from '@/composables/useColumnWidth'
 import request from '@/api/request'
 
 const authStore = useAuthStore()
+
+const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
+  'role-col-widths',
+  {
+    roleCode: 180,
+    roleName: 180,
+    description: 300
+  }
+)
+loadColWidths()
 
 const list = ref([])
 const loading = ref(false)

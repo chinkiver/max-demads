@@ -103,6 +103,7 @@ import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { useDictStore } from '@/stores/dict'
+import { useColumnWidth } from '@/composables/useColumnWidth'
 import request from '@/api/request'
 
 const authStore = useAuthStore()
@@ -119,35 +120,17 @@ const currentId = ref(null)
 
 const page = ref({ current: 1, size: 10, total: 0 })
 
-const COL_WIDTH_KEY = 'dev-branch-col-widths'
-const defaultColWidths = {
-  branchName: 140,
-  systemName: 120,
-  status: 100,
-  verifyBranchName: 200,
-  prodRequirements: 280,
-  operation: 120
-}
-const colWidths = ref({ ...defaultColWidths })
-
-const loadColWidths = () => {
-  try {
-    const saved = localStorage.getItem(COL_WIDTH_KEY)
-    if (saved) {
-      colWidths.value = { ...defaultColWidths, ...JSON.parse(saved) }
-    }
-  } catch (e) {
-    console.error('加载列宽失败', e)
+const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
+  'dev-branch-col-widths',
+  {
+    branchName: 140,
+    systemName: 120,
+    status: 100,
+    verifyBranchName: 200,
+    prodRequirements: 280,
+    operation: 120
   }
-}
-
-const handleHeaderDragend = (newWidth, oldWidth, column) => {
-  const prop = column.property
-  if (prop && colWidths.value[prop] !== undefined) {
-    colWidths.value[prop] = newWidth
-    localStorage.setItem(COL_WIDTH_KEY, JSON.stringify(colWidths.value))
-  }
-}
+)
 
 const form = ref({
   branchName: '',

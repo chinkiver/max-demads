@@ -175,6 +175,7 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { useDictStore } from '@/stores/dict'
+import { useColumnWidth } from '@/composables/useColumnWidth'
 import request from '@/api/request'
 import QuickSelect from '@/components/QuickSelect.vue'
 
@@ -195,39 +196,21 @@ const currentId = ref(null)
 const query = ref({ bizReqId: '' })
 const page = ref({ current: 1, size: 10, total: 0 })
 
-const COL_WIDTH_KEY = 'prod-requirement-col-widths'
-const defaultColWidths = {
-  prodReqCode: 140,
-  prodReqName: 180,
-  systemName: 120,
-  developer: 100,
-  status: 100,
-  devBranchName: 150,
-  devBranchStatus: 120,
-  verifyBranchName: 150,
-  verifyBranchStatus: 120,
-  operation: 180
-}
-const colWidths = ref({ ...defaultColWidths })
-
-const loadColWidths = () => {
-  try {
-    const saved = localStorage.getItem(COL_WIDTH_KEY)
-    if (saved) {
-      colWidths.value = { ...defaultColWidths, ...JSON.parse(saved) }
-    }
-  } catch (e) {
-    console.error('加载列宽失败', e)
+const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
+  'prod-requirement-col-widths',
+  {
+    prodReqCode: 140,
+    prodReqName: 180,
+    systemName: 120,
+    developer: 100,
+    status: 100,
+    devBranchName: 150,
+    devBranchStatus: 120,
+    verifyBranchName: 150,
+    verifyBranchStatus: 120,
+    operation: 180
   }
-}
-
-const handleHeaderDragend = (newWidth, oldWidth, column) => {
-  const prop = column.property
-  if (prop && colWidths.value[prop] !== undefined) {
-    colWidths.value[prop] = newWidth
-    localStorage.setItem(COL_WIDTH_KEY, JSON.stringify(colWidths.value))
-  }
-}
+)
 
 const form = ref({
   prodReqCode: '',

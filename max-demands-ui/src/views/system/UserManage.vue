@@ -11,22 +11,22 @@
         </div>
       </template>
 
-      <el-table :data="list" v-loading="loading" border>
-        <el-table-column prop="username" label="用户名" />
-        <el-table-column prop="realName" label="姓名" />
-        <el-table-column prop="status" label="状态" width="80">
+      <el-table :data="list" v-loading="loading" border @header-dragend="handleHeaderDragend">
+        <el-table-column prop="username" label="用户名" :width="colWidths.username" />
+        <el-table-column prop="realName" label="姓名" :width="colWidths.realName" />
+        <el-table-column prop="status" label="状态" :width="colWidths.status">
           <template #default="{ row }">
             <el-tag :type="row.status === 1 ? 'success' : 'danger'">{{ row.status === 1 ? '启用' : '禁用' }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="角色" min-width="180">
+        <el-table-column prop="roles" label="角色" :width="colWidths.roles">
           <template #default="{ row }">
             <el-tag v-for="role in row.roles" :key="role.id" size="small" style="margin-right: 5px; margin-bottom: 3px;">
               {{ role.roleName }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="280">
+        <el-table-column label="操作" width="280" :resizable="false">
           <template #default="{ row }">
             <el-button type="warning" link @click="handleResetPwd(row)" v-if="authStore.userInfo?.permissions?.includes('sys:user:edit')">重置密码</el-button>
             <el-button type="primary" link @click="handleToggleStatus(row)" v-if="authStore.userInfo?.permissions?.includes('sys:user:edit') && row.username !== 'admin'">{{ row.status === 1 ? '禁用' : '启用' }}</el-button>
@@ -98,9 +98,21 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
+import { useColumnWidth } from '@/composables/useColumnWidth'
 import request from '@/api/request'
 
 const authStore = useAuthStore()
+
+const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
+  'user-col-widths',
+  {
+    username: 150,
+    realName: 120,
+    status: 80,
+    roles: 200
+  }
+)
+loadColWidths()
 
 const list = ref([])
 const roleList = ref([])

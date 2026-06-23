@@ -21,11 +21,11 @@
           <div style="margin-bottom: 10px; color: #909399; font-size: 13px;">
             字段名：{{ group.type }}
           </div>
-          <el-table :data="group.items" border>
-            <el-table-column prop="dictCode" label="字典编码" />
-            <el-table-column prop="dictName" label="字典名称" />
-            <el-table-column prop="sortOrder" label="排序" width="80" />
-            <el-table-column label="操作" width="180">
+          <el-table :data="group.items" border @header-dragend="handleHeaderDragend">
+            <el-table-column prop="dictCode" label="字典编码" :width="colWidths.dictCode" />
+            <el-table-column prop="dictName" label="字典名称" :width="colWidths.dictName" />
+            <el-table-column prop="sortOrder" label="排序" :width="colWidths.sortOrder" />
+            <el-table-column label="操作" width="180" :resizable="false">
               <template #default="{ row }">
                 <el-button type="primary" link @click="handleEdit(row)" v-if="authStore.userInfo?.permissions?.includes('sys:dict:edit')">编辑</el-button>
                 <el-button type="danger" link @click="handleDelete(row)" v-if="authStore.userInfo?.permissions?.includes('sys:dict:delete')">删除</el-button>
@@ -64,10 +64,21 @@ import { ref, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { useDictStore } from '@/stores/dict'
+import { useColumnWidth } from '@/composables/useColumnWidth'
 import request from '@/api/request'
 
 const authStore = useAuthStore()
 const dictStore = useDictStore()
+
+const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
+  'dict-col-widths',
+  {
+    dictCode: 200,
+    dictName: 260,
+    sortOrder: 80
+  }
+)
+loadColWidths()
 
 // 字典类型中文映射
 const typeNameMap = {

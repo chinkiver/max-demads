@@ -23,22 +23,22 @@
         <div>标准投产：只能投产自主优化需求</div>
       </el-alert>
 
-      <el-table :data="list" v-loading="loading" border :row-class-name="rowClassName">
-        <el-table-column prop="batchNo" label="批次号" />
-        <el-table-column prop="batchType" label="批次种类">
+      <el-table :data="list" v-loading="loading" border :row-class-name="rowClassName" @header-dragend="handleHeaderDragend">
+        <el-table-column prop="batchNo" label="批次号" :width="colWidths.batchNo" />
+        <el-table-column prop="batchType" label="批次种类" :width="colWidths.batchType">
           <template #default="{ row }">
             <el-tag :type="getBatchTypeTag(row.batchType)" size="small">
               {{ dictStore.getDict('batch_type').find(d => d.dictCode === row.batchType)?.dictName || row.batchType }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="batchDate" label="批次日期" />
-        <el-table-column prop="status" label="状态" width="100">
+        <el-table-column prop="batchDate" label="批次日期" :width="colWidths.batchDate" />
+        <el-table-column prop="status" label="状态" :width="colWidths.status">
           <template #default="{ row }">
             {{ dictStore.getDict('batch_status').find(d => d.dictCode === row.status)?.dictName || row.status }}
           </template>
         </el-table-column>
-        <el-table-column label="需求" min-width="220">
+        <el-table-column prop="requirements" label="需求" :width="colWidths.requirements">
           <template #default="{ row }">
             <div v-if="row.requirements?.length">
               <div v-for="req in row.requirements" :key="req.id" style="margin-bottom: 4px;">
@@ -48,7 +48,7 @@
             <span v-else style="color: #999;">-</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="260" fixed="right">
+        <el-table-column label="操作" width="260" fixed="right" :resizable="false">
           <template #default="{ row }">
             <el-button type="primary" link @click="handleViewRequirements(row)">查看需求</el-button>
             <el-button type="primary" link @click="handleEdit(row)" v-if="authStore.userInfo?.permissions?.includes('batch:edit')">编辑</el-button>
@@ -199,10 +199,23 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { useDictStore } from '@/stores/dict'
+import { useColumnWidth } from '@/composables/useColumnWidth'
 import request from '@/api/request'
 
 const authStore = useAuthStore()
 const dictStore = useDictStore()
+
+const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
+  'batch-col-widths',
+  {
+    batchNo: 150,
+    batchType: 120,
+    batchDate: 120,
+    status: 100,
+    requirements: 220
+  }
+)
+loadColWidths()
 
 const list = ref([])
 const loading = ref(false)

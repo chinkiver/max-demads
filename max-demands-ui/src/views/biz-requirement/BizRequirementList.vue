@@ -306,6 +306,7 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { useDictStore } from '@/stores/dict'
+import { useColumnWidth } from '@/composables/useColumnWidth'
 import request from '@/api/request'
 import QuickSelect from '@/components/QuickSelect.vue'
 
@@ -328,20 +329,22 @@ const viewProdReqList = ref([])
 const query = ref({ status: '', batchId: '' })
 const page = ref({ current: 1, size: 10, total: 0 })
 
-const COL_WIDTH_KEY = 'biz-requirement-col-widths'
-const defaultColWidths = {
-  req: 320,
-  summary: 240,
-  reqCategory: 100,
-  priority: 100,
-  proposer: 100,
-  proposerDept: 150,
-  owner: 100,
-  batchNo: 180,
-  status: 100,
-  operation: 180
-}
-const colWidths = ref({ ...defaultColWidths })
+const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
+  'biz-requirement-col-widths',
+  {
+    req: 320,
+    summary: 240,
+    reqCategory: 100,
+    priority: 100,
+    proposer: 100,
+    proposerDept: 150,
+    owner: 100,
+    batchNo: 180,
+    status: 100,
+    operation: 180
+  },
+  (prop) => prop === 'reqCode' ? 'req' : prop
+)
 
 const COLUMN_VISIBLE_KEY = 'biz-requirement-visible-columns'
 const columnOptions = [
@@ -371,28 +374,6 @@ const loadVisibleColumns = () => {
 
 const saveVisibleColumns = () => {
   localStorage.setItem(COLUMN_VISIBLE_KEY, JSON.stringify(visibleColumns.value))
-}
-
-const loadColWidths = () => {
-  try {
-    const saved = localStorage.getItem(COL_WIDTH_KEY)
-    if (saved) {
-      colWidths.value = { ...defaultColWidths, ...JSON.parse(saved) }
-    }
-  } catch (e) {
-    console.error('加载列宽失败', e)
-  }
-}
-
-const handleHeaderDragend = (newWidth, oldWidth, column) => {
-  let prop = column.property
-  if (prop === 'reqCode') {
-    prop = 'req'
-  }
-  if (prop && colWidths.value[prop] !== undefined) {
-    colWidths.value[prop] = newWidth
-    localStorage.setItem(COL_WIDTH_KEY, JSON.stringify(colWidths.value))
-  }
 }
 
 const HISTORY_KEYS = {

@@ -11,12 +11,12 @@
         </div>
       </template>
 
-      <el-table :data="list" v-loading="loading" border>
-        <el-table-column prop="systemName" label="系统名称" />
-        <el-table-column prop="businessDept" label="归属业务部门" />
-        <el-table-column prop="owner" label="负责人" />
-        <el-table-column prop="description" label="系统描述" show-overflow-tooltip />
-        <el-table-column label="操作" width="180">
+      <el-table :data="list" v-loading="loading" border @header-dragend="handleHeaderDragend">
+        <el-table-column prop="systemName" label="系统名称" :width="colWidths.systemName" />
+        <el-table-column prop="businessDept" label="归属业务部门" :width="colWidths.businessDept" />
+        <el-table-column prop="owner" label="负责人" :width="colWidths.owner" />
+        <el-table-column prop="description" label="系统描述" :width="colWidths.description" />
+        <el-table-column label="操作" width="180" :resizable="false">
           <template #default="{ row }">
             <el-button type="primary" link @click="handleEdit(row)" v-if="authStore.userInfo?.permissions?.includes('app:system:edit')">编辑</el-button>
             <el-button type="danger" link @click="handleDelete(row)" v-if="authStore.userInfo?.permissions?.includes('app:system:delete')">删除</el-button>
@@ -52,9 +52,21 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
+import { useColumnWidth } from '@/composables/useColumnWidth'
 import request from '@/api/request'
 
 const authStore = useAuthStore()
+
+const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
+  'app-system-col-widths',
+  {
+    systemName: 180,
+    businessDept: 180,
+    owner: 120,
+    description: 260
+  }
+)
+loadColWidths()
 
 const list = ref([])
 const loading = ref(false)

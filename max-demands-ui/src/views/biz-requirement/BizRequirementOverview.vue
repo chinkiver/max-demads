@@ -12,8 +12,9 @@
         v-loading="loading"
         border
         default-expand-all
+        @header-dragend="handleHeaderDragend"
       >
-        <el-table-column label="层级/名称" min-width="300">
+        <el-table-column prop="name" label="层级/名称" :width="colWidths.name">
           <template #default="{ row }">
             <el-tag :type="getTypeTag(row.type)" size="small" style="margin-right: 8px;">
               {{ typeLabel[row.type] }}
@@ -21,7 +22,7 @@
             <span>{{ row.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="状态" width="110">
+        <el-table-column prop="status" label="状态" :width="colWidths.status">
           <template #default="{ row }">
             <el-tag v-if="row.status" :type="getStatusTag(row.type, row.status)" size="small">
               {{ row.statusName }}
@@ -29,14 +30,14 @@
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column label="负责人/开发人" width="130">
+        <el-table-column prop="owner" label="负责人/开发人" :width="colWidths.owner">
           <template #default="{ row }">
             <el-tag v-if="row.type === 'biz' && row.owner" type="info" size="small">{{ row.owner }}</el-tag>
             <el-tag v-else-if="row.type === 'prod' && row.developer" type="info" size="small">{{ row.developer }}</el-tag>
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column label="所属系统" width="140">
+        <el-table-column prop="systemName" label="所属系统" :width="colWidths.systemName">
           <template #default="{ row }">
             <el-tag v-if="row.type === 'prod' && row.systemName" type="warning" size="small">{{ row.systemName }}</el-tag>
             <span v-else>-</span>
@@ -52,10 +53,23 @@ import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import request from '@/api/request'
 import { useDictStore } from '@/stores/dict'
+import { useColumnWidth } from '@/composables/useColumnWidth'
 
 const dictStore = useDictStore()
 const loading = ref(false)
 const treeData = ref([])
+
+const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
+  'biz-requirement-overview-col-widths',
+  {
+    name: 300,
+    status: 110,
+    owner: 130,
+    systemName: 140
+  }
+)
+
+loadColWidths()
 
 const typeLabel = {
   biz: '业务需求',
