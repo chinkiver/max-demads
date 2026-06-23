@@ -73,8 +73,11 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column v-if="visibleColumns.includes('proposer')" prop="proposer" label="提出人" :width="colWidths.proposer" />
-        <el-table-column v-if="visibleColumns.includes('proposerDept')" prop="proposerDept" label="提出部门" :width="colWidths.proposerDept" show-overflow-tooltip />
+        <el-table-column v-if="visibleColumns.includes('proposer')" prop="proposer" label="提出人/部门" :width="colWidths.proposer">
+          <template #default="{ row }">
+            {{ row.proposer }}/{{ row.proposerDept }}
+          </template>
+        </el-table-column>
         <el-table-column v-if="visibleColumns.includes('owner')" prop="owner" label="负责人" :width="colWidths.owner">
           <template #default="{ row }">
             <span style="display: inline-flex; align-items: center; vertical-align: middle;">
@@ -344,8 +347,7 @@ const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
     summary: 240,
     reqCategory: 100,
     priority: 100,
-    proposer: 100,
-    proposerDept: 150,
+    proposer: 180,
     owner: 100,
     batchNo: 180,
     status: 100,
@@ -360,8 +362,7 @@ const columnOptions = [
   { prop: 'summary', label: '需求概要' },
   { prop: 'reqCategory', label: '需求种类' },
   { prop: 'priority', label: '优先级' },
-  { prop: 'proposer', label: '提出人' },
-  { prop: 'proposerDept', label: '提出部门' },
+  { prop: 'proposer', label: '提出人/部门' },
   { prop: 'owner', label: '负责人' },
   { prop: 'batchNo', label: '关联批次' },
   { prop: 'status', label: '状态' }
