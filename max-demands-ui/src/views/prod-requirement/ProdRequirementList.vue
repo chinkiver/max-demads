@@ -119,7 +119,7 @@
               size="small"
               style="margin-right: 6px; margin-bottom: 4px; cursor: pointer;"
               @click="form.bizReqId = item.value"
-            >{{ item.label }}</el-tag>
+            >{{ (bizReqList.find(b => String(b.id) === String(item.value)) && `${bizReqList.find(b => String(b.id) === String(item.value)).reqCode}-${bizReqList.find(b => String(b.id) === String(item.value)).reqName}`) || item.label }}</el-tag>
           </div>
         </el-form-item>
         <el-form-item label="关联系统" prop="systemId">
@@ -134,6 +134,7 @@
             dialog-width="600px"
             create-history-prefix="app-system-create"
             :create-history-fields="{ businessDept: { label: '归属业务部门', limit: 5 }, owner: { label: '负责人', limit: 5 } }"
+            :options="appSystemList"
           >
             <template #create-form="{ form }">
               <el-form-item label="系统名称" prop="systemName">
@@ -157,7 +158,7 @@
               size="small"
               style="margin-right: 6px; margin-bottom: 4px; cursor: pointer;"
               @click="form.systemId = item.value"
-            >{{ item.label }}</el-tag>
+            >{{ appSystemList.find(s => String(s.id) === String(item.value))?.systemName || item.label }}</el-tag>
           </div>
         </el-form-item>
         <el-form-item label="开发人员" prop="developer">
@@ -371,10 +372,10 @@ const handleSubmit = async () => {
       await request.post('/prod-requirement', form.value)
       ElMessage.success('新增成功')
     }
-    saveHistory(form.value)
     dialogVisible.value = false
-    fetchList()
-    fetchAppSystems()
+    await fetchList()
+    await fetchAppSystems()
+    saveHistory(form.value)
   } finally {
     submitting.value = false
   }

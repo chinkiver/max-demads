@@ -71,7 +71,8 @@ const props = defineProps({
   createRules: { type: Object, default: () => null },
   dialogWidth: { type: String, default: '500px' },
   createHistoryPrefix: { type: String, default: null },
-  createHistoryFields: { type: Object, default: null }
+  createHistoryFields: { type: Object, default: null },
+  options: { type: Array, default: null }
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -81,7 +82,8 @@ const { historyMap, loadHistory, saveHistory } = historyEnabled.value
   ? useInputHistory(props.createHistoryPrefix, props.createHistoryFields)
   : { historyMap: ref({}), loadHistory: () => {}, saveHistory: () => {} }
 
-const list = ref([])
+const fetchedList = ref([])
+const list = computed(() => props.options || fetchedList.value)
 const dialogVisible = ref(false)
 const creating = ref(false)
 const createFormRef = ref()
@@ -94,9 +96,10 @@ const defaultCreateRules = {
 const effectiveCreateRules = computed(() => props.createRules || defaultCreateRules)
 
 const fetchList = async () => {
+  if (props.options) return
   const res = await request.get(props.api)
   const data = res.data || []
-  list.value = data.records || data || []
+  fetchedList.value = data.records || data || []
 }
 
 const openCreateDialog = () => {
@@ -121,8 +124,12 @@ const handleCreate = async () => {
   }
 }
 
-onMounted(fetchList)
-watch(() => props.api, fetchList)
+onMounted(() => {
+  if (!props.options) fetchList()
+})
+watch(() => props.api, () => {
+  if (!props.options) fetchList()
+})
 </script>
 
 <style scoped>
