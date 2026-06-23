@@ -33,7 +33,7 @@ ssh -p "$SERVER_PORT" "$SERVER_USER@$SERVER_HOST" "$DEPLOY_DIR/scripts/stop.sh $
 
 # 4. 启动新服务
 echo "[4/4] 启动新服务..."
-ssh -p "$SERVER_PORT" "$SERVER_USER@$SERVER_HOST" "$DEPLOY_DIR/scripts/start.sh $DEPLOY_DIR $JAR_NAME $APP_NAME"
+ssh -p "$SERVER_PORT" "$SERVER_USER@$SERVER_HOST" "$DEPLOY_DIR/scripts/start.sh $DEPLOY_DIR $JAR_NAME $APP_NAME $PROFILE"
 
 echo "========================================"
 echo "部署完成"
