@@ -11,6 +11,7 @@
         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         v-loading="loading"
         border
+        :row-class-name="getRowClassName"
         @header-dragend="handleHeaderDragend"
       >
         <el-table-column prop="name" label="层级/名称" :width="colWidths.name">
@@ -129,6 +130,10 @@ const getStatusTag = (type, status) => {
   return getBranchStatusType(status)
 }
 
+const getRowClassName = ({ row }) => {
+  return row.type === 'biz' ? 'biz-requirement-row' : ''
+}
+
 const buildTree = (list) => {
   return list.map(biz => {
     const bizNode = {
@@ -193,3 +198,12 @@ onMounted(() => {
   loadData()
 })
 </script>
+
+<style scoped>
+:deep(.biz-requirement-row td) {
+  background-color: #eef2ff !important;
+}
+:deep(.el-table__body tr.biz-requirement-row:hover > td.el-table__cell) {
+  background-color: #e0e7ff !important;
+}
+</style>
