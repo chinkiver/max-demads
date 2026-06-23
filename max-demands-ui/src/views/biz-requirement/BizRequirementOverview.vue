@@ -1,0 +1,173 @@
+<template>
+  <div>
+    <div class="page-header">
+      <h1 class="page-header-title">需求全览</h1>
+      <p class="page-header-desc">查看业务需求及其归属产品需求、开发分支、验证分支的整体情况</p>
+    </div>
+    <el-card class="page-card">
+      <el-table
+        :data="treeData"
+        row-key="id"
+        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+        v-loading="loading"
+        border
+        default-expand-all
+      >
+        <el-table-column label="层级/名称" min-width="320">
+          <template #default="{ row }">
+            <el-tag :type="getTypeTag(row.type)" size="small" style="margin-right: 8px;">
+              {{ typeLabel[row.type] }}
+            </el-tag>
+            <span>{{ row.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="状态" width="120">
+          <template #default="{ row }">
+            <el-tag v-if="row.status" :type="getStatusTag(row.type, row.status)" size="small">
+              {{ row.statusName }}
+            </el-tag>
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="补充信息" min-width="200">
+          <template #default="{ row }">
+            <span v-if="row.type === 'prod' && row.systemName">所属系统：{{ row.systemName }}</span>
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
+import request from '@/api/request'
+import { useDictStore } from '@/stores/dict'
+
+const dictStore = useDictStore()
+const loading = ref(false)
+const treeData = ref([])
+
+const typeLabel = {
+  biz: '业务需求',
+  prod: '产品需求',
+  dev: '开发分支',
+  verify: '验证分支'
+}
+
+const getTypeTag = (type) => {
+  const map = {
+    biz: 'primary',
+    prod: 'success',
+    dev: 'warning',
+    verify: 'info'
+  }
+  return map[type] || ''
+}
+
+const getBizStatusType = (status) => {
+  const map = {
+    draft: 'info',
+    pending: 'warning',
+    assigned: 'primary',
+    in_progress: 'success',
+    system_testing: 'primary',
+    acceptance_testing: 'warning',
+    pending_production: 'danger',
+    completed: 'success',
+    cancelled: 'info'
+  }
+  return map[status] || ''
+}
+
+const getProdStatusType = (status) => {
+  const map = {
+    draft: 'info',
+    pending: 'warning',
+    developing: 'primary',
+    testing: 'warning',
+    completed: 'success',
+    cancelled: 'info'
+  }
+  return map[status] || ''
+}
+
+const getBranchStatusType = (status) => {
+  const map = {
+    active: 'success',
+    merged: 'primary',
+    closed: 'info'
+  }
+  return map[status] || ''
+}
+
+const getStatusTag = (type, status) => {
+  if (type === 'biz') return getBizStatusType(status)
+  if (type === 'prod') return getProdStatusType(status)
+  return getBranchStatusType(status)
+}
+
+const buildTree = (list) => {
+  return list.map(biz => {
+    const bizNode = {
+      id: `biz-${biz.id}`,
+      type: 'biz',
+      name: `${biz.reqCode}-${biz.reqName}`,
+      status: biz.status,
+      statusName: biz.statusName,
+      children: (biz.prodRequirements || []).map(prod => {
+        const prodNode = {
+          id: `prod-${prod.id}`,
+          type: 'prod',
+          name: `${prod.prodReqCode}-${prod.prodReqName}`,
+          status: prod.status,
+          statusName: prod.statusName,
+          systemName: prod.systemName,
+          children: []
+        }
+        if (prod.devBranch) {
+          const devNode = {
+            id: `dev-${prod.devBranch.id}`,
+            type: 'dev',
+            name: prod.devBranch.branchName,
+            status: prod.devBranch.status,
+            statusName: prod.devBranch.statusName,
+            children: []
+          }
+          if (prod.devBranch.verifyBranch) {
+            devNode.children.push({
+              id: `verify-${prod.devBranch.verifyBranch.id}`,
+              type: 'verify',
+              name: prod.devBranch.verifyBranch.branchName,
+              status: prod.devBranch.verifyBranch.status,
+              statusName: prod.devBranch.verifyBranch.statusName
+            })
+          }
+          prodNode.children.push(devNode)
+        }
+        return prodNode
+      })
+    }
+    return bizNode
+  })
+}
+
+const loadData = async () => {
+  loading.value = true
+  try {
+    const res = await request.get('/biz-requirement/overview')
+    treeData.value = buildTree(res.data || [])
+  } catch (e) {
+    ElMessage.error('加载需求全览失败')
+    console.error(e)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  loadData()
+})
+</script>

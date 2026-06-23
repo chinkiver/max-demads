@@ -7,6 +7,7 @@ import com.maxdemands.entity.BizRequirement;
 import com.maxdemands.entity.ProdRequirement;
 import com.maxdemands.service.BizRequirementService;
 import com.maxdemands.service.ProdRequirementService;
+import com.maxdemands.vo.BizRequirementOverviewVO;
 import com.maxdemands.vo.BizRequirementVO;
 import com.maxdemands.common.result.Result;
 import lombok.RequiredArgsConstructor;
@@ -69,5 +70,11 @@ public class BizRequirementController {
                         .eq(ProdRequirement::getBizReqId, id)
         );
         return Result.success(list);
+    }
+
+    @GetMapping("/overview")
+    @PreAuthorize("hasAuthority('biz:requirement:overview:list')")
+    public Result<List<BizRequirementOverviewVO>> overview() {
+        return Result.success(bizRequirementService.buildOverview());
     }
 }

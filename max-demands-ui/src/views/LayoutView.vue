@@ -20,10 +20,18 @@
             <span>仪表盘</span>
           </el-menu-item>
 
-          <el-menu-item index="/biz-requirement" v-if="hasPermi('biz:requirement:menu')">
-            <el-icon><Document /></el-icon>
-            <span>业务需求</span>
-          </el-menu-item>
+          <el-sub-menu index="biz-requirement-group" v-if="hasPermi('biz:requirement:menu') || hasPermi('biz:requirement:overview:menu')">
+            <template #title>
+              <el-icon><Document /></el-icon>
+              <span>业务需求</span>
+            </template>
+            <el-menu-item index="/biz-requirement" v-if="hasPermi('biz:requirement:menu')">
+              <span>需求管理</span>
+            </el-menu-item>
+            <el-menu-item index="/biz-requirement-overview" v-if="hasPermi('biz:requirement:overview:menu')">
+              <span>需求全览</span>
+            </el-menu-item>
+          </el-sub-menu>
 
           <el-menu-item index="/prod-requirement" v-if="hasPermi('prod:requirement:menu')">
             <el-icon><DocumentCopy /></el-icon>
@@ -138,7 +146,8 @@ const hasPermi = (perm) => {
 const pageTitle = computed(() => {
   const titles = {
     '/dashboard': 'Analytics Dashboard',
-    '/biz-requirement': '业务需求管理',
+    '/biz-requirement': '需求管理',
+    '/biz-requirement-overview': '需求全览',
     '/prod-requirement': '产品需求管理',
     '/dev-branch': '开发分支管理',
     '/verify-branch': '验证分支管理',
