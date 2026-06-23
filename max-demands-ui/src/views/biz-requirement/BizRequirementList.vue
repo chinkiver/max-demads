@@ -77,24 +77,28 @@
         <el-table-column v-if="visibleColumns.includes('proposerDept')" prop="proposerDept" label="提出部门" :width="colWidths.proposerDept" show-overflow-tooltip />
         <el-table-column v-if="visibleColumns.includes('owner')" prop="owner" label="负责人" :width="colWidths.owner">
           <template #default="{ row }">
-            {{ row.owner }}
-            <img
-              v-if="row.owner && row.owner === authStore.userInfo?.realName"
-              src="@/assets/me-badge.png"
-              alt="我"
-              style="width: 18px; height: 18px;"
-            />
+            <span style="display: inline-flex; align-items: center; vertical-align: middle;">
+              {{ row.owner }}
+              <img
+                v-if="row.owner && row.owner === authStore.userInfo?.realName"
+                src="@/assets/me-badge.png"
+                alt="我"
+                style="width: 18px; height: 18px; margin-left: 1px;"
+              />
+            </span>
           </template>
         </el-table-column>
         <el-table-column v-if="visibleColumns.includes('batchNo')" prop="batchNo" label="关联批次" :width="colWidths.batchNo">
           <template #default="{ row }">
-            <img
-              v-if="isCurrentMonth(row.batchDate)"
-              src="@/assets/attention.png"
-              alt="注意"
-              style="width: 18px; height: 18px; vertical-align: middle; margin-right: 4px;"
-            />
-            <span>{{ batchList.find(item => item.id === row.batchId)?.batchNo || '-' }}</span>
+            <span style="display: inline-flex; align-items: center; vertical-align: middle;">
+              <img
+                v-if="isCurrentMonth(row.batchDate)"
+                src="@/assets/attention.png"
+                alt="注意"
+                style="width: 18px; height: 18px; margin-right: 1px;"
+              />
+              <span>{{ batchList.find(item => item.id === row.batchId)?.batchNo || '-' }}</span>
+            </span>
           </template>
         </el-table-column>
         <el-table-column v-if="visibleColumns.includes('status')" prop="status" label="状态" :width="colWidths.status">
