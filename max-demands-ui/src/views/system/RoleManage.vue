@@ -2,7 +2,7 @@
   <div>
     <div class="page-header">
       <h1 class="page-header-title">角色权限管理</h1>
-      <p class="page-header-desc">Define roles and assign permissions</p>
+      <p class="page-header-desc">定义角色并分配权限</p>
     </div>
     <el-card class="page-card">
       <template #header>

@@ -2,7 +2,7 @@
   <div>
     <div class="page-header">
       <h1 class="page-header-title">数据字典管理</h1>
-      <p class="page-header-desc">Manage system dictionary entries and categories</p>
+      <p class="page-header-desc">管理系统字典项与分类</p>
     </div>
     <el-card class="page-card">
       <template #header>

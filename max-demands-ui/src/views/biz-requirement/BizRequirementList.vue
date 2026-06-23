@@ -2,7 +2,7 @@
   <div>
     <div class="page-header">
       <h1 class="page-header-title">业务需求管理</h1>
-      <p class="page-header-desc">Manage business requirements and track delivery progress</p>
+      <p class="page-header-desc">管理业务需求，跟踪交付进度</p>
     </div>
     <el-card class="page-card">
       <template #header>

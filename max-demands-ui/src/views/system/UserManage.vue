@@ -2,7 +2,7 @@
   <div>
     <div class="page-header">
       <h1 class="page-header-title">用户管理</h1>
-      <p class="page-header-desc">Manage system users and their roles</p>
+      <p class="page-header-desc">管理系统用户及其角色</p>
     </div>
     <el-card class="page-card">
       <template #header>

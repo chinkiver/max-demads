@@ -2,7 +2,7 @@
   <div>
     <div class="page-header">
       <h1 class="page-header-title">产品需求管理</h1>
-      <p class="page-header-desc">Manage product requirements under business requirements</p>
+      <p class="page-header-desc">管理业务需求下的产品子需求</p>
     </div>
     <el-card class="page-card">
       <template #header>

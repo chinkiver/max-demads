@@ -2,7 +2,7 @@
   <div>
     <div class="page-header">
       <h1 class="page-header-title">投产批次管理</h1>
-      <p class="page-header-desc">Manage release batches and deployment schedules</p>
+      <p class="page-header-desc">管理投产批次与部署计划</p>
     </div>
     <el-card class="page-card">
       <template #header>

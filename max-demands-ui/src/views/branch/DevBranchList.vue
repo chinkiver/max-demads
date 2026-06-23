@@ -2,7 +2,7 @@
   <div>
     <div class="page-header">
       <h1 class="page-header-title">开发分支管理</h1>
-      <p class="page-header-desc">Manage development branches and their relationships</p>
+      <p class="page-header-desc">管理开发分支及其关联关系</p>
     </div>
     <el-card class="page-card">
       <template #header>

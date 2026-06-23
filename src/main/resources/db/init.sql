@@ -265,6 +265,8 @@ WHERE r.role_code = 'demand_assign'
   AND p.perm_code IN (
       'biz:requirement:menu', 'biz:requirement:list', 'biz:requirement:add', 'biz:requirement:edit',
       'prod:requirement:menu', 'prod:requirement:list', 'prod:requirement:add', 'prod:requirement:edit',
+      'dev_branch:menu', 'dev_branch:list',
+      'verify_branch:menu', 'verify_branch:list',
       'batch:menu', 'batch:list', 'batch:add', 'batch:edit', 'batch:delete',
       'app:system:menu', 'app:system:list'
   )
@@ -277,6 +279,8 @@ WHERE r.role_code = 'user'
   AND p.perm_code IN (
       'biz:requirement:menu', 'biz:requirement:list',
       'prod:requirement:menu', 'prod:requirement:list',
+      'dev_branch:menu', 'dev_branch:list',
+      'verify_branch:menu', 'verify_branch:list',
       'batch:menu', 'batch:list',
       'app:system:menu', 'app:system:list'
   )

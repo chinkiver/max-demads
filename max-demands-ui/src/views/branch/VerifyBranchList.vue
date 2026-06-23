@@ -2,7 +2,7 @@
   <div>
     <div class="page-header">
       <h1 class="page-header-title">验证分支管理</h1>
-      <p class="page-header-desc">Manage verification branches linked to release batches</p>
+      <p class="page-header-desc">管理关联投产批次的验证分支</p>
     </div>
     <el-card class="page-card">
       <template #header>

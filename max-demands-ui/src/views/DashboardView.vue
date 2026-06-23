@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="page-header">
-      <h1 class="page-header-title">Analytics Dashboard</h1>
-      <p class="page-header-desc">Business performance & growth metrics</p>
+      <h1 class="page-header-title">仪表盘</h1>
+      <p class="page-header-desc">系统数据概览与统计指标</p>
     </div>
 
     <el-row :gutter="20">
@@ -15,7 +15,6 @@
             </div>
           </div>
           <div class="stat-value">{{ stats.bizReqCount }}</div>
-          <div class="stat-trend up">+12.5% <span>vs last month</span></div>
         </el-card>
       </el-col>
       <el-col :span="6">
@@ -27,7 +26,6 @@
             </div>
           </div>
           <div class="stat-value">{{ stats.prodReqCount }}</div>
-          <div class="stat-trend up">+8.2% <span>vs last month</span></div>
         </el-card>
       </el-col>
       <el-col :span="6">
@@ -39,7 +37,6 @@
             </div>
           </div>
           <div class="stat-value">{{ stats.devBranchCount }}</div>
-          <div class="stat-trend up">+2.4% <span>vs last month</span></div>
         </el-card>
       </el-col>
       <el-col :span="6">
@@ -51,49 +48,6 @@
             </div>
           </div>
           <div class="stat-value">{{ stats.batchCount }}</div>
-          <div class="stat-trend down">-1.2% <span>vs last month</span></div>
-        </el-card>
-      </el-col>
-    </el-row>
-
-    <el-row :gutter="20" style="margin-top: 24px;">
-      <el-col :span="16">
-        <el-card :body-style="{ padding: '24px' }">
-          <div class="section-title">Recent Activity</div>
-          <div class="section-desc">Latest actions across the system</div>
-          <div class="activity-list">
-            <div class="activity-item" v-for="(item, index) in activities" :key="index">
-              <div class="activity-dot"></div>
-              <div class="activity-content">
-                <div class="activity-title">{{ item.title }}</div>
-                <div class="activity-desc">{{ item.desc }}</div>
-              </div>
-              <div class="activity-time">{{ item.time }}</div>
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="8">
-        <el-card :body-style="{ padding: '24px' }">
-          <div class="section-title">Quick Stats</div>
-          <div class="section-desc">System overview</div>
-          <div class="quick-stats">
-            <div class="quick-stat-item">
-              <div class="quick-stat-label">Active Users</div>
-              <div class="quick-stat-value">83%</div>
-            </div>
-            <el-progress :percentage="83" :show-text="false" color="#6366f1" />
-            <div class="quick-stat-item">
-              <div class="quick-stat-label">Role Coverage</div>
-              <div class="quick-stat-value">3/4</div>
-            </div>
-            <el-progress :percentage="75" :show-text="false" color="#10b981" />
-            <div class="quick-stat-item">
-              <div class="quick-stat-label">Permission Utilization</div>
-              <div class="quick-stat-value">14</div>
-            </div>
-            <el-progress :percentage="70" :show-text="false" color="#f59e0b" />
-          </div>
         </el-card>
       </el-col>
     </el-row>
@@ -111,13 +65,6 @@ const stats = reactive({
   devBranchCount: 0,
   batchCount: 0
 })
-
-const activities = [
-  { title: 'New user created', desc: 'Admin was added to the system', time: '2 min ago' },
-  { title: 'Role updated', desc: 'Editor role permissions modified', time: '15 min ago' },
-  { title: 'Permission added', desc: 'New "Export Data" permission created', time: '1 hour ago' },
-  { title: 'User deactivated', desc: 'Viewer account marked inactive', time: '3 hours ago' }
-]
 
 onMounted(async () => {
   try {
@@ -208,100 +155,8 @@ onMounted(async () => {
   margin-bottom: 8px;
 }
 
-.stat-trend {
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.stat-trend.up {
-  color: #10b981;
-}
-
-.stat-trend.down {
-  color: #ef4444;
-}
-
-.stat-trend span {
-  color: #9ca3af;
-  font-weight: 400;
-}
-
-.section-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 4px;
-}
-
-.section-desc {
-  font-size: 14px;
-  color: #6b7280;
-  margin-bottom: 24px;
-}
-
-.activity-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.activity-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-}
-
-.activity-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #6366f1;
-  margin-top: 6px;
-  flex-shrink: 0;
-}
-
-.activity-content {
-  flex: 1;
-}
-
-.activity-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 2px;
-}
-
-.activity-desc {
-  font-size: 13px;
-  color: #6b7280;
-}
-
-.activity-time {
-  font-size: 12px;
-  color: #9ca3af;
-  flex-shrink: 0;
-}
-
-.quick-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.quick-stat-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.quick-stat-label {
-  font-size: 14px;
-  color: #4b5563;
-}
-
-.quick-stat-value {
-  font-size: 14px;
+.stat-value {
+  font-size: 32px;
   font-weight: 700;
   color: #111827;
 }

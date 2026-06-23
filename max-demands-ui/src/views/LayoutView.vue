@@ -72,16 +72,6 @@
         </el-menu>
       </div>
 
-      <div class="sidebar-footer">
-        <div class="plan-card">
-          <div class="plan-header">
-            <span class="plan-name">Pro Plan</span>
-            <span class="plan-percent">74%</span>
-          </div>
-          <el-progress :percentage="74" :show-text="false" color="#6366f1" />
-          <div class="plan-desc">Storage used</div>
-        </div>
-      </div>
     </el-aside>
 
     <el-container class="main-container">
@@ -275,42 +265,6 @@ const handleCommand = (cmd) => {
 
 .sidebar-menu :deep(.el-menu-item.is-active .el-icon) {
   color: #6366f1;
-}
-
-.sidebar-footer {
-  padding: 16px;
-  border-top: 1px solid #f3f4f6;
-}
-
-.plan-card {
-  background: #eef2ff;
-  border-radius: 12px;
-  padding: 14px;
-}
-
-.plan-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.plan-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #4f46e5;
-}
-
-.plan-percent {
-  font-size: 13px;
-  font-weight: 600;
-  color: #6366f1;
-}
-
-.plan-desc {
-  font-size: 12px;
-  color: #6b7280;
-  margin-top: 8px;
 }
 
 .main-container {

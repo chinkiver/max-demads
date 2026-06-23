@@ -2,7 +2,7 @@
   <div>
     <div class="page-header">
       <h1 class="page-header-title">应用系统管理</h1>
-      <p class="page-header-desc">Manage application systems and ownership</p>
+      <p class="page-header-desc">管理应用系统与归属部门</p>
     </div>
     <el-card class="page-card">
       <template #header>
