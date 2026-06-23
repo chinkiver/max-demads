@@ -1,4 +1,4 @@
-# Max 需求管理系统 - Windows 构建脚本
+﻿# Max 需求管理系统 - Windows 构建脚本
 # 用法：右键选择"使用 PowerShell 运行"，或在 PowerShell 中执行：
 #   .\scripts\build.ps1
 
@@ -7,6 +7,8 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $projectDir = Split-Path -Parent $scriptDir
