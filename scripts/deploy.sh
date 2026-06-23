@@ -29,11 +29,11 @@ ssh -p "$SERVER_PORT" "$SERVER_USER@$SERVER_HOST" "chmod +x $DEPLOY_DIR/scripts/
 
 # 3. 停止旧服务
 echo "[3/4] 停止旧服务..."
-ssh -p "$SERVER_PORT" "$SERVER_USER@$SERVER_HOST" "$DEPLOY_DIR/scripts/stop.sh $DEPLOY_DIR $JAR_NAME" || true
+ssh -p "$SERVER_PORT" "$SERVER_USER@$SERVER_HOST" "cd $DEPLOY_DIR && ./scripts/stop.sh $JAR_NAME" || true
 
 # 4. 启动新服务
 echo "[4/4] 启动新服务..."
-ssh -p "$SERVER_PORT" "$SERVER_USER@$SERVER_HOST" "$DEPLOY_DIR/scripts/start.sh $DEPLOY_DIR $JAR_NAME $APP_NAME $PROFILE"
+ssh -p "$SERVER_PORT" "$SERVER_USER@$SERVER_HOST" "cd $DEPLOY_DIR && ./scripts/start.sh $JAR_NAME $PROFILE"
 
 echo "========================================"
 echo "部署完成"

@@ -1,7 +1,20 @@
 #!/bin/bash
 
-DEPLOY_DIR=${1:-/opt/max-demands}
-JAR_NAME=${2:-max-demands.jar}
+# 服务器端停止脚本
+# 在当前工作目录下执行
+# 用法：
+#   ./stop.sh [jar文件名]
+# 示例：
+#   ./stop.sh max-demands.jar
+
+JAR_NAME=${1:-max-demands.jar}
+DEPLOY_DIR=$(pwd)
+
+echo "========================================"
+echo "Max 需求管理系统 - 停止脚本"
+echo "工作目录：$DEPLOY_DIR"
+echo "JAR: $DEPLOY_DIR/$JAR_NAME"
+echo "========================================"
 
 PID=$(ps -ef | grep "$JAR_NAME" | grep -v grep | awk '{print $2}' | head -1)
 if [ -z "$PID" ]; then
@@ -25,3 +38,4 @@ done
 echo "进程未正常退出，执行强制结束..."
 kill -9 "$PID" || true
 echo "应用已停止"
+echo "========================================"

@@ -1,10 +1,26 @@
 #!/bin/bash
 set -e
 
-DEPLOY_DIR=${1:-/opt/max-demands}
-JAR_NAME=${2:-max-demands.jar}
-APP_NAME=${3:-max-demands}
+# 服务器端重启脚本
+# 在当前工作目录下执行
+# 用法：
+#   ./restart.sh [jar文件名] [profiles]
+# 示例：
+#   ./restart.sh max-demands.jar prod
 
-"$DEPLOY_DIR/scripts/stop.sh" "$DEPLOY_DIR" "$JAR_NAME"
+JAR_NAME=${1:-max-demands.jar}
+PROFILE=${2:-prod}
+
+echo "========================================"
+echo "Max 需求管理系统 - 重启脚本"
+echo "JAR: $JAR_NAME"
+echo "Profile: $PROFILE"
+echo "========================================"
+
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+
+"$SCRIPT_DIR/stop.sh" "$JAR_NAME"
 sleep 2
-"$DEPLOY_DIR/scripts/start.sh" "$DEPLOY_DIR" "$JAR_NAME" "$APP_NAME"
+"$SCRIPT_DIR/start.sh" "$JAR_NAME" "$PROFILE"
+
+echo "========================================"
