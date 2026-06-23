@@ -3,15 +3,11 @@
     <div class="login-card">
       <div class="login-logo">
         <div class="logo-icon">
-          <el-icon size="28" color="white"><Lightning /></el-icon>
-        </div>
-        <div class="logo-text">
-          <div class="logo-title">需求管理系统</div>
+          <el-icon size="36" color="white"><Lightning /></el-icon>
         </div>
       </div>
 
-      <h1 class="login-title">Welcome back</h1>
-      <p class="login-subtitle">Sign in to your account</p>
+      <h1 class="login-title">Max 需求管理系统</h1>
 
       <el-form :model="form" :rules="rules" ref="formRef" class="login-form">
         <el-form-item prop="username">
@@ -48,9 +44,6 @@
         </el-form-item>
       </el-form>
 
-      <div class="login-demo">
-        Demo: admin / admin123
-      </div>
     </div>
   </div>
 </template>
@@ -114,39 +107,25 @@ const handleLogin = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
 .logo-icon {
-  width: 44px;
-  height: 44px;
+  width: 64px;
+  height: 64px;
   background: #6366f1;
-  border-radius: 12px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
-}
-
-.logo-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: #111827;
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.45);
 }
 
 .login-title {
   text-align: center;
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
   color: #111827;
-  margin: 0 0 8px 0;
-}
-
-.login-subtitle {
-  text-align: center;
-  font-size: 15px;
-  color: #6b7280;
   margin: 0 0 32px 0;
 }
 
@@ -159,15 +138,5 @@ const handleLogin = async () => {
   font-weight: 500;
   color: #374151;
   margin-bottom: 6px;
-}
-
-.login-demo {
-  margin-top: 24px;
-  padding: 12px 16px;
-  background: #eef2ff;
-  border-radius: 10px;
-  text-align: center;
-  font-size: 13px;
-  color: #4f46e5;
 }
 </style>
