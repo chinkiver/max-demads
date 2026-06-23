@@ -80,9 +80,20 @@ npm run dev
 
 ### 一键构建（推荐）
 
+Linux / macOS / Git Bash：
+
 ```bash
 ./scripts/build.sh
 ```
+
+Windows：
+
+```powershell
+# PowerShell
+.\scripts\build.ps1
+```
+
+或双击运行 `scripts/build.bat`。
 
 构建完成后，产物为：
 
