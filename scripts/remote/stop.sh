@@ -16,7 +16,7 @@ echo "工作目录：$DEPLOY_DIR"
 echo "JAR: $DEPLOY_DIR/$JAR_NAME"
 echo "========================================"
 
-PID=$(ps -ef | grep "$JAR_NAME" | grep -v grep | awk '{print $2}' | head -1)
+PID=$(pgrep -f "java.*$JAR_NAME")
 if [ -z "$PID" ]; then
     echo "应用未运行"
     exit 0

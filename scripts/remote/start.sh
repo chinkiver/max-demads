@@ -32,7 +32,7 @@ if [ ! -f "$DEPLOY_DIR/$JAR_NAME" ]; then
 fi
 
 # 检查是否已在运行
-PID=$(ps -ef | grep "$JAR_NAME" | grep -v grep | awk '{print $2}' | head -1)
+PID=$(pgrep -f "java.*$JAR_NAME")
 if [ -n "$PID" ]; then
     echo "应用已在运行，PID: $PID"
     exit 0
@@ -41,10 +41,10 @@ fi
 # 启动应用
 nohup java -jar "$DEPLOY_DIR/$JAR_NAME" --spring.profiles.active="$PROFILE" > "$LOG_FILE" 2>&1 &
 
-sleep 3
+sleep 5
 
 # 检查启动状态
-NEW_PID=$(ps -ef | grep "$JAR_NAME" | grep -v grep | awk '{print $2}' | head -1)
+NEW_PID=$(pgrep -f "java.*$JAR_NAME")
 if [ -n "$NEW_PID" ]; then
     echo "应用启动成功，PID: $NEW_PID"
     echo "日志文件：$LOG_FILE"
