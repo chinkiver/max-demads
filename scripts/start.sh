@@ -11,17 +11,16 @@ set -e
 JAR_NAME=${1:-max-demands-1.0.0.jar}
 PROFILE=${2:-prod}
 APP_NAME=max-demands
-DEPLOY_DIR=$(cd "$(dirname "$0")/.." && pwd)
+DEPLOY_DIR=$(pwd)
 LOG_DIR="$DEPLOY_DIR/logs"
 LOG_FILE="$LOG_DIR/$APP_NAME.log"
 
 echo "========================================"
 echo "Max 需求管理系统 - 启动脚本"
+echo "工作目录：$DEPLOY_DIR"
 echo "JAR: $DEPLOY_DIR/$JAR_NAME"
 echo "Profile: $PROFILE"
 echo "========================================"
-
-cd "$DEPLOY_DIR"
 
 # 创建日志目录
 mkdir -p "$LOG_DIR"

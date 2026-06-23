@@ -7,10 +7,12 @@
 #   ./scripts/stop.sh max-demands-1.0.0.jar
 
 JAR_NAME=${1:-max-demands-1.0.0.jar}
+DEPLOY_DIR=$(pwd)
 
 echo "========================================"
 echo "Max 需求管理系统 - 停止脚本"
-echo "JAR: $JAR_NAME"
+echo "工作目录：$DEPLOY_DIR"
+echo "JAR: $DEPLOY_DIR/$JAR_NAME"
 echo "========================================"
 
 PID=$(ps -ef | grep "$JAR_NAME" | grep -v grep | awk '{print $2}' | head -1)
