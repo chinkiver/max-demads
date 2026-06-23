@@ -6,7 +6,23 @@
     </div>
     <el-card class="page-card">
       <template #header>
-        <div style="display: flex; justify-content: flex-end; align-items: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <el-select
+            v-model="visibleColumns"
+            multiple
+            collapse-tags
+            collapse-tags-tooltip
+            placeholder="选择展示字段"
+            style="width: 180px;"
+            @change="saveVisibleColumns"
+          >
+            <el-option
+              v-for="col in columnOptions"
+              :key="col.prop"
+              :label="col.label"
+              :value="col.prop"
+            />
+          </el-select>
           <el-button type="primary" class="page-action-btn" @click="handleAdd" v-if="authStore.userInfo?.permissions?.includes('prod:requirement:add')">+ 新增产品需求</el-button>
         </div>
       </template>
@@ -29,17 +45,22 @@
       </el-form>
 
       <el-table :data="list" v-loading="loading" border @header-dragend="handleHeaderDragend">
-        <el-table-column prop="prodReqCode" label="产品需求编码-名称" :width="colWidths.prodReqCode">
+        <el-table-column v-if="visibleColumns.includes('prodReqCode')" prop="prodReqCode" label="产品需求编码-名称" :width="colWidths.prodReqCode">
           <template #default="{ row }">
             {{ row.prodReqCode }}-{{ row.prodReqName }}
           </template>
         </el-table-column>
-        <el-table-column prop="systemName" label="开发系统" :width="colWidths.systemName">
+        <el-table-column v-if="visibleColumns.includes('bizReqName')" prop="bizReqName" label="归属业务名称" :width="colWidths.bizReqName">
+          <template #default="{ row }">
+            {{ bizReqList.find(b => b.id === row.bizReqId)?.reqName || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column v-if="visibleColumns.includes('systemName')" prop="systemName" label="开发系统" :width="colWidths.systemName">
           <template #default="{ row }">
             {{ appSystemList.find(s => s.id === row.systemId)?.systemName || row.systemId }}
           </template>
         </el-table-column>
-        <el-table-column prop="developer" label="开发人员" :width="colWidths.developer">
+        <el-table-column v-if="visibleColumns.includes('developer')" prop="developer" label="开发人员" :width="colWidths.developer">
           <template #default="{ row }">
             {{ row.developer }}
             <img
@@ -50,27 +71,27 @@
             />
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" :width="colWidths.status">
+        <el-table-column v-if="visibleColumns.includes('status')" prop="status" label="状态" :width="colWidths.status">
           <template #default="{ row }">
             {{ dictStore.getDict('prod_req_status').find(d => d.dictCode === row.status)?.dictName || row.status }}
           </template>
         </el-table-column>
-        <el-table-column prop="devBranchName" label="关联开发分支" show-overflow-tooltip :width="colWidths.devBranchName">
+        <el-table-column v-if="visibleColumns.includes('devBranchName')" prop="devBranchName" label="关联开发分支" show-overflow-tooltip :width="colWidths.devBranchName">
           <template #default="{ row }">
             {{ row.devBranchName || '-' }}
           </template>
         </el-table-column>
-        <el-table-column prop="devBranchStatus" label="开发分支状态" :width="colWidths.devBranchStatus">
+        <el-table-column v-if="visibleColumns.includes('devBranchStatus')" prop="devBranchStatus" label="开发分支状态" :width="colWidths.devBranchStatus">
           <template #default="{ row }">
             {{ dictStore.getDict('branch_status').find(d => d.dictCode === row.devBranchStatus)?.dictName || row.devBranchStatus || '-' }}
           </template>
         </el-table-column>
-        <el-table-column prop="verifyBranchName" label="验证分支" show-overflow-tooltip :width="colWidths.verifyBranchName">
+        <el-table-column v-if="visibleColumns.includes('verifyBranchName')" prop="verifyBranchName" label="验证分支" show-overflow-tooltip :width="colWidths.verifyBranchName">
           <template #default="{ row }">
             {{ row.verifyBranchName || '-' }}
           </template>
         </el-table-column>
-        <el-table-column prop="verifyBranchStatus" label="验证分支状态" :width="colWidths.verifyBranchStatus">
+        <el-table-column v-if="visibleColumns.includes('verifyBranchStatus')" prop="verifyBranchStatus" label="验证分支状态" :width="colWidths.verifyBranchStatus">
           <template #default="{ row }">
             {{ dictStore.getDict('branch_status').find(d => d.dictCode === row.verifyBranchStatus)?.dictName || row.verifyBranchStatus || '-' }}
           </template>
@@ -262,10 +283,43 @@ const { historyMap, loadHistory, saveHistory } = useInputHistory('prod-requireme
   developer: { limit: 5 }
 })
 
+const COLUMN_VISIBLE_KEY = 'prod-requirement-visible-columns'
+const columnOptions = [
+  { prop: 'prodReqCode', label: '产品需求编码-名称' },
+  { prop: 'bizReqName', label: '归属业务名称' },
+  { prop: 'systemName', label: '开发系统' },
+  { prop: 'developer', label: '开发人员' },
+  { prop: 'status', label: '状态' },
+  { prop: 'devBranchName', label: '关联开发分支' },
+  { prop: 'devBranchStatus', label: '开发分支状态' },
+  { prop: 'verifyBranchName', label: '验证分支' },
+  { prop: 'verifyBranchStatus', label: '验证分支状态' }
+]
+const defaultVisibleColumns = columnOptions
+  .map(c => c.prop)
+  .filter(p => !['devBranchStatus', 'verifyBranchStatus', 'bizReqName'].includes(p))
+const visibleColumns = ref([...defaultVisibleColumns])
+
+const loadVisibleColumns = () => {
+  try {
+    const saved = localStorage.getItem(COLUMN_VISIBLE_KEY)
+    if (saved) {
+      visibleColumns.value = JSON.parse(saved)
+    }
+  } catch (e) {
+    console.error('加载显示列失败', e)
+  }
+}
+
+const saveVisibleColumns = () => {
+  localStorage.setItem(COLUMN_VISIBLE_KEY, JSON.stringify(visibleColumns.value))
+}
+
 const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
   'prod-requirement-col-widths',
   {
     prodReqCode: 280,
+    bizReqName: 150,
     systemName: 120,
     developer: 100,
     status: 100,
@@ -394,6 +448,7 @@ const handleDelete = async (row) => {
 
 onMounted(() => {
   loadColWidths()
+  loadVisibleColumns()
   loadHistory()
   fetchList()
   fetchBizReqList()
