@@ -317,6 +317,7 @@ const handleSubmit = async () => {
     }
     dialogVisible.value = false
     fetchList()
+    fetchAppSystems()
   } finally {
     submitting.value = false
   }
