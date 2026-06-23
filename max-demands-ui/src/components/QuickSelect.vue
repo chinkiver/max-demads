@@ -5,6 +5,7 @@
       @update:model-value="$emit('update:modelValue', $event)"
       :placeholder="placeholder"
       clearable
+      filterable
       class="quick-select-input"
     >
       <el-option
