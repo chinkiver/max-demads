@@ -95,7 +95,9 @@
         </el-table-column>
         <el-table-column v-if="visibleColumns.includes('status')" prop="status" label="状态" :width="colWidths.status">
           <template #default="{ row }">
-            {{ dictStore.getDict('biz_req_status').find(d => d.dictCode === row.status)?.dictName || row.status }}
+            <el-tag :type="getStatusType(row.status)" size="small">
+              {{ dictStore.getDict('biz_req_status').find(d => d.dictCode === row.status)?.dictName || row.status }}
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" :width="colWidths.operation" fixed="right" :resizable="false">
@@ -465,6 +467,21 @@ const getPriorityType = (priority) => {
     low: 'info'
   }
   return map[priority] || ''
+}
+
+const getStatusType = (status) => {
+  const map = {
+    draft: 'info',
+    pending: 'warning',
+    assigned: 'primary',
+    in_progress: 'success',
+    system_testing: 'primary',
+    acceptance_testing: 'warning',
+    pending_production: 'danger',
+    completed: 'success',
+    cancelled: 'info'
+  }
+  return map[status] || ''
 }
 
 const isCurrentMonth = (batchDate) => {
