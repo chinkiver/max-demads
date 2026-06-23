@@ -29,8 +29,11 @@
       </el-form>
 
       <el-table :data="list" v-loading="loading" border @header-dragend="handleHeaderDragend">
-        <el-table-column prop="prodReqCode" label="产品需求编码" :width="colWidths.prodReqCode" />
-        <el-table-column prop="prodReqName" label="产品需求名称" show-overflow-tooltip :width="colWidths.prodReqName" />
+        <el-table-column prop="prodReqCode" label="产品需求编码-名称" :width="colWidths.prodReqCode">
+          <template #default="{ row }">
+            {{ row.prodReqCode }}-{{ row.prodReqName }}
+          </template>
+        </el-table-column>
         <el-table-column prop="systemName" label="开发系统" :width="colWidths.systemName">
           <template #default="{ row }">
             {{ appSystemList.find(s => s.id === row.systemId)?.systemName || row.systemId }}
@@ -200,8 +203,7 @@ const page = ref({ current: 1, size: 10, total: 0 })
 const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
   'prod-requirement-col-widths',
   {
-    prodReqCode: 140,
-    prodReqName: 180,
+    prodReqCode: 280,
     systemName: 120,
     developer: 100,
     status: 100,
