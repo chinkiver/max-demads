@@ -13,11 +13,11 @@
 
       <el-form :inline="true" style="margin-bottom: 16px;">
         <el-form-item label="关联业务需求">
-          <el-select v-model="query.bizReqId" placeholder="请选择" clearable filterable style="width: 220px;">
+          <el-select v-model="query.bizReqId" placeholder="请选择" clearable filterable style="width: 260px;">
             <el-option
               v-for="item in bizReqList"
               :key="item.id"
-              :label="item.reqName"
+              :label="`${item.reqCode}-${item.reqName}`"
               :value="item.id"
             />
           </el-select>
@@ -98,9 +98,9 @@
         <el-form-item label="关联业务需求" prop="bizReqId">
           <el-select v-model="form.bizReqId" placeholder="请选择" clearable filterable style="width: 100%;">
             <el-option
-              v-for="item in bizReqList"
+              v-for="item in dialogBizReqList"
               :key="item.id"
-              :label="item.reqName"
+              :label="`${item.reqCode}-${item.reqName}`"
               :value="item.id"
             />
           </el-select>
@@ -175,7 +175,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { useDictStore } from '@/stores/dict'
@@ -199,6 +199,11 @@ const currentId = ref(null)
 
 const query = ref({ bizReqId: '' })
 const page = ref({ current: 1, size: 10, total: 0 })
+
+const dialogBizReqList = computed(() => {
+  if (isEdit.value) return bizReqList.value
+  return bizReqList.value.filter(item => item.status !== 'completed')
+})
 
 const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
   'prod-requirement-col-widths',
