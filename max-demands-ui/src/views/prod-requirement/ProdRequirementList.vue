@@ -111,6 +111,7 @@
             placeholder="请选择系统"
             :create-fields="[]"
             :create-rules="appSystemCreateRules"
+            dialog-width="600px"
           >
             <template #create-form="{ form }">
               <el-form-item label="系统名称" prop="systemName">

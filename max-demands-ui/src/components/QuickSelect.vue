@@ -16,7 +16,7 @@
     </el-select>
     <el-button type="primary" @click="openCreateDialog" style="margin-left: 8px;">新建</el-button>
 
-    <el-dialog v-model="dialogVisible" title="新建" width="400px" append-to-body>
+    <el-dialog v-model="dialogVisible" title="新建" :width="dialogWidth" append-to-body>
       <el-form :model="createForm" ref="createFormRef" :rules="effectiveCreateRules" label-width="100px">
         <el-form-item label="名称" prop="name" v-if="createFields.includes('name')">
           <el-input v-model="createForm.name" />
@@ -47,7 +47,8 @@ const props = defineProps({
   placeholder: { type: String, default: '请选择' },
   createFields: { type: Array, default: () => ['name'] },
   createExtra: { type: Object, default: () => ({}) },
-  createRules: { type: Object, default: () => null }
+  createRules: { type: Object, default: () => null },
+  dialogWidth: { type: String, default: '500px' }
 })
 
 const emit = defineEmits(['update:modelValue'])
