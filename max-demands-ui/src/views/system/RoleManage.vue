@@ -1,9 +1,12 @@
 <template>
   <div>
-    <el-card>
+    <div class="page-header">
+      <h1 class="page-header-title">角色权限管理</h1>
+      <p class="page-header-desc">Define roles and assign permissions</p>
+    </div>
+    <el-card class="page-card">
       <template #header>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span>角色权限管理</span>
+        <div style="display: flex; justify-content: flex-end; align-items: center;">
         </div>
       </template>
 

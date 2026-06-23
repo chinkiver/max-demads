@@ -1,9 +1,13 @@
 <template>
   <div>
-    <el-card>
+    <div class="page-header">
+      <h1 class="page-header-title">开发分支管理</h1>
+      <p class="page-header-desc">Manage development branches and their relationships</p>
+    </div>
+    <el-card class="page-card">
       <template #header>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span>开发分支管理</span>
+        <div style="display: flex; justify-content: flex-end; align-items: center;">
+          <el-button type="primary" class="page-action-btn" @click="handleAdd" v-if="authStore.userInfo?.permissions?.includes('dev_branch:add')">+ 新增分支</el-button>
         </div>
       </template>
 

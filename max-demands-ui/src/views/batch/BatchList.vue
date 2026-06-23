@@ -1,14 +1,15 @@
 <template>
   <div>
-    <el-card>
+    <div class="page-header">
+      <h1 class="page-header-title">投产批次管理</h1>
+      <p class="page-header-desc">Manage release batches and deployment schedules</p>
+    </div>
+    <el-card class="page-card">
       <template #header>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span>投产批次管理</span>
-          <div>
-            <el-button type="warning" @click="handleAutoUpdate" v-if="authStore.userInfo?.permissions?.includes('batch:edit')">自动更新</el-button>
-            <el-button type="success" @click="openAutoDialog" v-if="authStore.userInfo?.permissions?.includes('batch:edit')">自动生成批次</el-button>
-            <el-button type="primary" @click="handleAdd" v-if="authStore.userInfo?.permissions?.includes('batch:add')">新增</el-button>
-          </div>
+        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+          <el-button @click="handleAutoUpdate" v-if="authStore.userInfo?.permissions?.includes('batch:edit')">自动更新</el-button>
+          <el-button @click="openAutoDialog" v-if="authStore.userInfo?.permissions?.includes('batch:edit')">自动生成批次</el-button>
+          <el-button type="primary" class="page-action-btn" @click="handleAdd" v-if="authStore.userInfo?.permissions?.includes('batch:add')">+ 新增批次</el-button>
         </div>
       </template>
 

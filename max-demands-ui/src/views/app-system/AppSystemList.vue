@@ -1,10 +1,13 @@
 <template>
   <div>
-    <el-card>
+    <div class="page-header">
+      <h1 class="page-header-title">应用系统管理</h1>
+      <p class="page-header-desc">Manage application systems and ownership</p>
+    </div>
+    <el-card class="page-card">
       <template #header>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span>应用系统管理</span>
-          <el-button type="primary" @click="handleAdd" v-if="authStore.userInfo?.permissions?.includes('app:system:add')">新增</el-button>
+        <div style="display: flex; justify-content: flex-end; align-items: center;">
+          <el-button type="primary" class="page-action-btn" @click="handleAdd" v-if="authStore.userInfo?.permissions?.includes('app:system:add')">+ 新增系统</el-button>
         </div>
       </template>
 

@@ -1,0 +1,155 @@
+:root {
+  --el-color-primary: #6366f1;
+  --el-color-primary-light-3: #818cf8;
+  --el-color-primary-light-5: #a5b4fc;
+  --el-color-primary-light-7: #c7d2fe;
+  --el-color-primary-light-8: #e0e7ff;
+  --el-color-primary-light-9: #eef2ff;
+  --el-color-primary-dark-2: #4f46e5;
+
+  --layout-bg: #f5f7fa;
+  --sidebar-bg: #ffffff;
+  --sidebar-width: 260px;
+  --header-height: 64px;
+  --card-radius: 16px;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+/* 按钮 */
+.el-button--primary {
+  --el-button-bg-color: #6366f1;
+  --el-button-border-color: #6366f1;
+  --el-button-hover-bg-color: #4f46e5;
+  --el-button-hover-border-color: #4f46e5;
+  --el-button-active-bg-color: #4338ca;
+  --el-button-active-border-color: #4338ca;
+  border-radius: 8px;
+}
+
+.el-button--default {
+  border-radius: 8px;
+}
+
+/* 输入框 */
+.el-input__wrapper {
+  border-radius: 8px !important;
+  box-shadow: 0 0 0 1px #e4e7ec inset !important;
+}
+
+.el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px #6366f1 inset !important;
+}
+
+/* 卡片 */
+.el-card {
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  border: none;
+}
+
+/* 表格 */
+.el-table {
+  border-radius: 12px;
+  overflow: hidden;
+  --el-table-header-bg-color: #f9fafb;
+  --el-table-header-text-color: #6b7280;
+}
+
+.el-table th.el-table__cell {
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell {
+  background-color: #f9fafb;
+}
+
+/* 分页 */
+.el-pagination.is-background .el-pager li.is-active {
+  background-color: #6366f1;
+}
+
+/* 标签 */
+.el-tag {
+  border-radius: 6px;
+}
+
+/* 菜单 */
+.el-menu-item.is-active {
+  background-color: #eef2ff;
+  color: #6366f1;
+  border-radius: 8px;
+}
+
+/* 弹窗 */
+.el-dialog {
+  border-radius: 16px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.el-dialog__header {
+  border-bottom: 1px solid #f3f4f6;
+  padding: 20px 24px;
+  margin-right: 0;
+}
+
+.el-dialog__body {
+  padding: 24px;
+}
+
+.el-dialog__footer {
+  border-top: 1px solid #f3f4f6;
+  padding: 16px 24px;
+}
+
+/* Card header */
+.el-card__header {
+  border-bottom: 1px solid #f3f4f6;
+  padding: 20px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* 下拉选择 */
+.el-select .el-input__wrapper {
+  border-radius: 8px;
+}
+
+/* 页面通用 */
+.page-card {
+  background: white;
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  padding: 24px;
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 6px 0;
+}
+
+.page-header-desc {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.page-action-btn {
+  background: #6366f1;
+  border-color: #6366f1;
+  border-radius: 8px;
+}
+
+.page-action-btn:hover {
+  background: #4f46e5;
+  border-color: #4f46e5;
+}

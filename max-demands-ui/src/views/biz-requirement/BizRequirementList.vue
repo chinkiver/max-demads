@@ -1,28 +1,29 @@
 <template>
   <div>
-    <el-card>
+    <div class="page-header">
+      <h1 class="page-header-title">业务需求管理</h1>
+      <p class="page-header-desc">Manage business requirements and track delivery progress</p>
+    </div>
+    <el-card class="page-card">
       <template #header>
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span>业务需求管理</span>
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <el-select
-              v-model="visibleColumns"
-              multiple
-              collapse-tags
-              collapse-tags-tooltip
-              placeholder="选择展示字段"
-              style="width: 180px;"
-              @change="saveVisibleColumns"
-            >
-              <el-option
-                v-for="col in columnOptions"
-                :key="col.prop"
-                :label="col.label"
-                :value="col.prop"
-              />
-            </el-select>
-            <el-button type="primary" @click="handleAdd" v-if="authStore.userInfo?.permissions?.includes('biz:requirement:add')">新增</el-button>
-          </div>
+          <el-select
+            v-model="visibleColumns"
+            multiple
+            collapse-tags
+            collapse-tags-tooltip
+            placeholder="选择展示字段"
+            style="width: 180px;"
+            @change="saveVisibleColumns"
+          >
+            <el-option
+              v-for="col in columnOptions"
+              :key="col.prop"
+              :label="col.label"
+              :value="col.prop"
+            />
+          </el-select>
+          <el-button type="primary" class="page-action-btn" @click="handleAdd" v-if="authStore.userInfo?.permissions?.includes('biz:requirement:add')">+ 新增需求</el-button>
         </div>
       </template>
 

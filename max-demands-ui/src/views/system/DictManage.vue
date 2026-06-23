@@ -1,10 +1,13 @@
 <template>
   <div>
-    <el-card>
+    <div class="page-header">
+      <h1 class="page-header-title">数据字典管理</h1>
+      <p class="page-header-desc">Manage system dictionary entries and categories</p>
+    </div>
+    <el-card class="page-card">
       <template #header>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span>数据字典管理</span>
-          <el-button type="primary" @click="handleAdd" v-if="authStore.userInfo?.permissions?.includes('sys:dict:add')">新增</el-button>
+        <div style="display: flex; justify-content: flex-end; align-items: center;">
+          <el-button type="primary" class="page-action-btn" @click="handleAdd" v-if="authStore.userInfo?.permissions?.includes('sys:dict:add')">+ 新增字典</el-button>
         </div>
       </template>
 
