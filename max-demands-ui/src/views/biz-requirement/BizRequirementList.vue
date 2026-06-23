@@ -55,7 +55,7 @@
       </el-form>
 
       <el-table :data="list" v-loading="loading" border @header-dragend="handleHeaderDragend">
-        <el-table-column v-if="visibleColumns.includes('reqCode')" prop="reqCode" label="需求" :width="colWidths.req" show-overflow-tooltip>
+        <el-table-column v-if="visibleColumns.includes('reqCode')" prop="reqCode" label="业务需求编码-名称" :width="colWidths.req" show-overflow-tooltip>
           <template #default="{ row }">
             {{ row.reqCode }}-{{ row.reqName }}
           </template>
@@ -356,7 +356,7 @@ const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
 
 const COLUMN_VISIBLE_KEY = 'biz-requirement-visible-columns'
 const columnOptions = [
-  { prop: 'reqCode', label: '需求' },
+  { prop: 'reqCode', label: '业务需求编码-名称' },
   { prop: 'summary', label: '需求概要' },
   { prop: 'reqCategory', label: '需求种类' },
   { prop: 'priority', label: '优先级' },
