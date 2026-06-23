@@ -32,9 +32,27 @@
         </el-form-item>
         <el-form-item label="归属业务部门" prop="businessDept">
           <el-input v-model="form.businessDept" />
+          <div v-if="historyMap.businessDept.length" style="margin-top: 6px;">
+            <el-tag
+              v-for="item in historyMap.businessDept"
+              :key="item.value"
+              size="small"
+              style="margin-right: 6px; margin-bottom: 4px; cursor: pointer;"
+              @click="form.businessDept = item.value"
+            >{{ item.label }}</el-tag>
+          </div>
         </el-form-item>
         <el-form-item label="负责人" prop="owner">
           <el-input v-model="form.owner" />
+          <div v-if="historyMap.owner.length" style="margin-top: 6px;">
+            <el-tag
+              v-for="item in historyMap.owner"
+              :key="item.value"
+              size="small"
+              style="margin-right: 6px; margin-bottom: 4px; cursor: pointer;"
+              @click="form.owner = item.value"
+            >{{ item.label }}</el-tag>
+          </div>
         </el-form-item>
         <el-form-item label="系统描述" prop="description">
           <el-input v-model="form.description" type="textarea" :rows="3" />
@@ -53,9 +71,15 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { useColumnWidth } from '@/composables/useColumnWidth'
+import { useInputHistory } from '@/composables/useInputHistory'
 import request from '@/api/request'
 
 const authStore = useAuthStore()
+
+const { historyMap, loadHistory, saveHistory } = useInputHistory('app-system', {
+  businessDept: { limit: 5 },
+  owner: { limit: 5 }
+})
 
 const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
   'app-system-col-widths',
@@ -124,6 +148,7 @@ const handleSubmit = async () => {
       await request.post('/app-system', form.value)
       ElMessage.success('新增成功')
     }
+    saveHistory(form.value)
     dialogVisible.value = false
     fetchList()
   } finally {
@@ -144,5 +169,8 @@ const handleDelete = async (row) => {
   }
 }
 
-onMounted(fetchList)
+onMounted(() => {
+  loadHistory()
+  fetchList()
+})
 </script>
