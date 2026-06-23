@@ -93,7 +93,8 @@ CREATE TABLE IF NOT EXISTS app_system (
     description VARCHAR(500) COMMENT '系统描述',
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    deleted TINYINT DEFAULT 0 COMMENT '逻辑删除：0-未删除，1-已删除'
+    deleted TINYINT DEFAULT 0 COMMENT '逻辑删除：0-未删除，1-已删除',
+    UNIQUE KEY uk_system_name (system_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='应用系统表';
 
 -- 批次表
