@@ -45,14 +45,14 @@
       </el-form>
 
       <el-table :data="list" v-loading="loading" border @header-dragend="handleHeaderDragend">
-        <el-table-column v-if="visibleColumns.includes('prodReqCode')" prop="prodReqCode" label="产品需求编码-名称" :width="colWidths.prodReqCode">
-          <template #default="{ row }">
-            {{ row.prodReqCode }}-{{ row.prodReqName }}
-          </template>
-        </el-table-column>
         <el-table-column v-if="visibleColumns.includes('bizReqName')" prop="bizReqName" label="归属业务名称" :width="colWidths.bizReqName">
           <template #default="{ row }">
             {{ bizReqList.find(b => b.id === row.bizReqId)?.reqName || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column v-if="visibleColumns.includes('prodReqCode')" prop="prodReqCode" label="产品需求编码-名称" :width="colWidths.prodReqCode">
+          <template #default="{ row }">
+            {{ row.prodReqCode }}-{{ row.prodReqName }}
           </template>
         </el-table-column>
         <el-table-column v-if="visibleColumns.includes('systemName')" prop="systemName" label="开发系统" :width="colWidths.systemName">
