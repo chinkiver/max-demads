@@ -12,6 +12,7 @@
         <div class="menu-section-title">业务菜单</div>
         <el-menu
           :default-active="$route.path"
+          :default-openeds="[]"
           router
           class="sidebar-menu"
         >
@@ -20,7 +21,7 @@
             <span>仪表盘</span>
           </el-menu-item>
 
-          <el-sub-menu index="biz-requirement-group" v-if="hasPermi('biz:requirement:menu') || hasPermi('biz:requirement:overview:menu')">
+          <el-sub-menu index="biz-requirement-group" v-if="hasPermi('biz:requirement:menu') || hasPermi('biz:requirement:overview:menu') || hasPermi('biz:requirement:completed:menu')">
             <template #title>
               <el-icon><Document /></el-icon>
               <span>业务需求</span>
@@ -30,6 +31,9 @@
             </el-menu-item>
             <el-menu-item index="/biz-requirement-overview" v-if="hasPermi('biz:requirement:overview:menu')">
               <span>需求全览</span>
+            </el-menu-item>
+            <el-menu-item index="/biz-requirement-completed" v-if="hasPermi('biz:requirement:completed:menu')">
+              <span>已投产需求</span>
             </el-menu-item>
           </el-sub-menu>
 
@@ -62,6 +66,7 @@
         <div class="menu-section-title" style="margin-top: 16px;">系统管理</div>
         <el-menu
           :default-active="$route.path"
+          :default-openeds="[]"
           router
           class="sidebar-menu"
         >
@@ -148,6 +153,7 @@ const pageTitle = computed(() => {
     '/dashboard': 'Analytics Dashboard',
     '/biz-requirement': '需求管理',
     '/biz-requirement-overview': '需求全览',
+    '/biz-requirement-completed': '已投产需求',
     '/prod-requirement': '产品需求管理',
     '/dev-branch': '开发分支管理',
     '/verify-branch': '验证分支管理',

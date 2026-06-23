@@ -12,4 +12,6 @@ public interface BizRequirementService extends IService<BizRequirement> {
     IPage<BizRequirementVO> pageWithBatch(IPage<BizRequirement> pageParam, String status, Long batchId);
 
     List<BizRequirementOverviewVO> buildOverview();
+
+    List<BizRequirementOverviewVO> buildOverviewCompleted();
 }

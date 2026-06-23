@@ -225,6 +225,7 @@ INSERT INTO sys_permission (perm_code, perm_name, module) VALUES
 ('biz:requirement:edit', '编辑业务需求', '业务需求'),
 ('biz:requirement:delete', '删除业务需求', '业务需求'),
 ('biz:requirement:overview:list', '需求全览列表', '业务需求'),
+('biz:requirement:completed:list', '已投产需求列表', '业务需求'),
 -- 产品需求
 ('prod:requirement:list', '产品需求列表', '产品需求'),
 ('prod:requirement:add', '新增产品需求', '产品需求'),
@@ -244,6 +245,7 @@ ON DUPLICATE KEY UPDATE perm_name = VALUES(perm_name);
 INSERT INTO sys_permission (perm_code, perm_name, module) VALUES
 ('biz:requirement:menu', '业务需求菜单', '业务需求'),
 ('biz:requirement:overview:menu', '需求全览菜单', '业务需求'),
+('biz:requirement:completed:menu', '已投产需求菜单', '业务需求'),
 ('prod:requirement:menu', '产品需求菜单', '产品需求'),
 ('dev_branch:menu', '开发分支菜单', '开发分支'),
 ('verify_branch:menu', '验证分支菜单', '验证分支'),
@@ -267,6 +269,7 @@ WHERE r.role_code = 'demand_assign'
   AND p.perm_code IN (
       'biz:requirement:menu', 'biz:requirement:list', 'biz:requirement:add', 'biz:requirement:edit',
       'biz:requirement:overview:menu', 'biz:requirement:overview:list',
+      'biz:requirement:completed:menu', 'biz:requirement:completed:list',
       'prod:requirement:menu', 'prod:requirement:list', 'prod:requirement:add', 'prod:requirement:edit',
       'dev_branch:menu', 'dev_branch:list',
       'verify_branch:menu', 'verify_branch:list',
@@ -280,7 +283,9 @@ INSERT INTO sys_role_permission (role_id, permission_id)
 SELECT r.id, p.id FROM sys_role r, sys_permission p
 WHERE r.role_code = 'user'
   AND p.perm_code IN (
-      'biz:requirement:menu', 'biz:requirement:list', 'biz:requirement:overview:menu', 'biz:requirement:overview:list',
+      'biz:requirement:menu', 'biz:requirement:list',
+      'biz:requirement:overview:menu', 'biz:requirement:overview:list',
+      'biz:requirement:completed:menu', 'biz:requirement:completed:list',
       'prod:requirement:menu', 'prod:requirement:list',
       'dev_branch:menu', 'dev_branch:list',
       'verify_branch:menu', 'verify_branch:list',

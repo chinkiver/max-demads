@@ -77,4 +77,10 @@ public class BizRequirementController {
     public Result<List<BizRequirementOverviewVO>> overview() {
         return Result.success(bizRequirementService.buildOverview());
     }
+
+    @GetMapping("/overview/completed")
+    @PreAuthorize("hasAuthority('biz:requirement:completed:list')")
+    public Result<List<BizRequirementOverviewVO>> overviewCompleted() {
+        return Result.success(bizRequirementService.buildOverviewCompleted());
+    }
 }

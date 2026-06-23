@@ -179,4 +179,11 @@ public class BizRequirementServiceImpl extends ServiceImpl<BizRequirementMapper,
             return vo;
         }).toList();
     }
+
+    @Override
+    public List<BizRequirementOverviewVO> buildOverviewCompleted() {
+        return buildOverview().stream()
+                .filter(vo -> "completed".equals(vo.getStatus()))
+                .toList();
+    }
 }

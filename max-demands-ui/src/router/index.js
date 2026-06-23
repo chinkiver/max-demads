@@ -15,6 +15,7 @@ const routes = [
       { path: 'dashboard', component: () => import('@/views/DashboardView.vue') },
       { path: 'biz-requirement', component: () => import('@/views/biz-requirement/BizRequirementList.vue') },
       { path: 'biz-requirement-overview', component: () => import('@/views/biz-requirement/BizRequirementOverview.vue') },
+      { path: 'biz-requirement-completed', component: () => import('@/views/biz-requirement/BizRequirementCompleted.vue') },
       { path: 'prod-requirement', component: () => import('@/views/prod-requirement/ProdRequirementList.vue') },
       { path: 'dev-branch', component: () => import('@/views/branch/DevBranchList.vue') },
       { path: 'verify-branch', component: () => import('@/views/branch/VerifyBranchList.vue') },
