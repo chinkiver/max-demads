@@ -24,7 +24,7 @@
           <el-table :data="group.items" border>
             <el-table-column prop="dictCode" label="字典编码" />
             <el-table-column prop="dictName" label="字典名称" />
-            <el-table-column prop="sort" label="排序" width="80" />
+            <el-table-column prop="sortOrder" label="排序" width="80" />
             <el-table-column label="操作" width="180">
               <template #default="{ row }">
                 <el-button type="primary" link @click="handleEdit(row)" v-if="authStore.userInfo?.permissions?.includes('sys:dict:edit')">编辑</el-button>
@@ -101,14 +101,14 @@ const form = ref({
   dictType: '',
   dictCode: '',
   dictName: '',
-  sort: 0
+  sortOrder: 0
 })
 
 const rules = {
   dictType: [{ required: true, message: '请输入字典类型', trigger: 'blur' }],
   dictCode: [{ required: true, message: '请输入字典编码', trigger: 'blur' }],
   dictName: [{ required: true, message: '请输入字典名称', trigger: 'blur' }],
-  sort: [{ required: true, message: '请输入排序', trigger: 'blur' }]
+  sortOrder: [{ required: true, message: '请输入排序', trigger: 'blur' }]
 }
 
 const dictGroups = computed(() => {
@@ -135,7 +135,7 @@ const handleAdd = () => {
     dictType: activeType.value || '',
     dictCode: '',
     dictName: '',
-    sort: 0
+    sortOrder: 0
   }
   dialogVisible.value = true
 }
@@ -146,7 +146,7 @@ const handleEdit = (row) => {
     dictType: row.dictType,
     dictCode: row.dictCode,
     dictName: row.dictName,
-    sort: row.sort
+    sortOrder: row.sortOrder
   }
   dialogVisible.value = true
 }

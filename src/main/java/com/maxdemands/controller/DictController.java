@@ -33,16 +33,30 @@ public class DictController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('sys:dict:edit')")
+    @PreAuthorize("hasAuthority('sys:dict:add')")
     public Result<Void> add(@RequestBody Dict dict) {
         dictService.save(dict);
         return Result.success();
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/{dictType}/{dictCode}")
     @PreAuthorize("hasAuthority('sys:dict:edit')")
-    public Result<Void> delete(@PathVariable Long id) {
-        dictService.removeById(id);
+    public Result<Void> update(@PathVariable String dictType,
+                               @PathVariable String dictCode,
+                               @RequestBody Dict dict) {
+        dictService.update(dict, new com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper<Dict>()
+                .eq(Dict::getDictType, dictType)
+                .eq(Dict::getDictCode, dictCode));
+        return Result.success();
+    }
+
+    @DeleteMapping("/{dictType}/{dictCode}")
+    @PreAuthorize("hasAuthority('sys:dict:delete')")
+    public Result<Void> delete(@PathVariable String dictType, @PathVariable String dictCode) {
+        dictService.remove(new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<Dict>()
+                .eq(Dict::getDictType, dictType)
+                .eq(Dict::getDictCode, dictCode));
         return Result.success();
     }
 }
+
