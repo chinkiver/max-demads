@@ -11,7 +11,6 @@
         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         v-loading="loading"
         border
-        default-expand-all
         @header-dragend="handleHeaderDragend"
       >
         <el-table-column prop="name" label="层级/名称" :width="colWidths.name">
