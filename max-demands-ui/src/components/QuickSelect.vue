@@ -26,6 +26,25 @@
           <el-input v-model="createForm.code" />
         </el-form-item>
         <slot name="create-form" :form="createForm" />
+        <template v-if="historyEnabled">
+          <div
+            v-for="(items, key) in historyMap"
+            :key="key"
+            v-show="items.length"
+            style="margin-top: 8px;"
+          >
+            <span style="font-size: 13px; color: #606266; margin-right: 6px;">
+              {{ createHistoryFields[key]?.label || key }}：
+            </span>
+            <el-tag
+              v-for="item in items"
+              :key="item.value"
+              size="small"
+              style="margin-right: 6px; margin-bottom: 4px; cursor: pointer;"
+              @click="createForm[key] = item.value"
+            >{{ item.label }}</el-tag>
+          </div>
+        </template>
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible = false">取消</el-button>
@@ -38,6 +57,7 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
 import { ElMessage } from 'element-plus'
+import { useInputHistory } from '@/composables/useInputHistory'
 import request from '@/api/request'
 
 const props = defineProps({
@@ -49,10 +69,17 @@ const props = defineProps({
   createFields: { type: Array, default: () => ['name'] },
   createExtra: { type: Object, default: () => ({}) },
   createRules: { type: Object, default: () => null },
-  dialogWidth: { type: String, default: '500px' }
+  dialogWidth: { type: String, default: '500px' },
+  createHistoryPrefix: { type: String, default: null },
+  createHistoryFields: { type: Object, default: null }
 })
 
 const emit = defineEmits(['update:modelValue'])
+
+const historyEnabled = computed(() => props.createHistoryPrefix && props.createHistoryFields)
+const { historyMap, loadHistory, saveHistory } = historyEnabled.value
+  ? useInputHistory(props.createHistoryPrefix, props.createHistoryFields)
+  : { historyMap: ref({}), loadHistory: () => {}, saveHistory: () => {} }
 
 const list = ref([])
 const dialogVisible = ref(false)
@@ -74,6 +101,7 @@ const fetchList = async () => {
 
 const openCreateDialog = () => {
   createForm.value = { name: '', code: '' }
+  if (historyEnabled.value) loadHistory()
   dialogVisible.value = true
 }
 
@@ -83,6 +111,7 @@ const handleCreate = async () => {
   try {
     const payload = { ...createForm.value, ...props.createExtra }
     const res = await request.post(props.createApi, payload)
+    if (historyEnabled.value) saveHistory(createForm.value)
     ElMessage.success('创建成功')
     dialogVisible.value = false
     await fetchList()

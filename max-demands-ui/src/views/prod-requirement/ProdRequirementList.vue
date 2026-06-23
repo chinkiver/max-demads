@@ -104,6 +104,15 @@
               :value="item.id"
             />
           </el-select>
+          <div v-if="historyMap.bizReqId.length" style="margin-top: 6px;">
+            <el-tag
+              v-for="item in historyMap.bizReqId"
+              :key="item.value"
+              size="small"
+              style="margin-right: 6px; margin-bottom: 4px; cursor: pointer;"
+              @click="form.bizReqId = item.value"
+            >{{ item.label }}</el-tag>
+          </div>
         </el-form-item>
         <el-form-item label="关联系统" prop="systemId">
           <QuickSelect
@@ -115,6 +124,8 @@
             :create-fields="[]"
             :create-rules="appSystemCreateRules"
             dialog-width="600px"
+            create-history-prefix="app-system-create"
+            :create-history-fields="{ businessDept: { label: '归属业务部门', limit: 5 }, owner: { label: '负责人', limit: 5 } }"
           >
             <template #create-form="{ form }">
               <el-form-item label="系统名称" prop="systemName">
@@ -131,9 +142,27 @@
               </el-form-item>
             </template>
           </QuickSelect>
+          <div v-if="historyMap.systemId.length" style="margin-top: 6px;">
+            <el-tag
+              v-for="item in historyMap.systemId"
+              :key="item.value"
+              size="small"
+              style="margin-right: 6px; margin-bottom: 4px; cursor: pointer;"
+              @click="form.systemId = item.value"
+            >{{ item.label }}</el-tag>
+          </div>
         </el-form-item>
         <el-form-item label="开发人员" prop="developer">
           <el-input v-model="form.developer" />
+          <div v-if="historyMap.developer.length" style="margin-top: 6px;">
+            <el-tag
+              v-for="item in historyMap.developer"
+              :key="item.value"
+              size="small"
+              style="margin-right: 6px; margin-bottom: 4px; cursor: pointer;"
+              @click="form.developer = item.value"
+            >{{ item.label }}</el-tag>
+          </div>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-select v-model="form.status" placeholder="请选择">
@@ -180,6 +209,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { useDictStore } from '@/stores/dict'
 import { useColumnWidth } from '@/composables/useColumnWidth'
+import { useInputHistory } from '@/composables/useInputHistory'
 import request from '@/api/request'
 import QuickSelect from '@/components/QuickSelect.vue'
 
@@ -203,6 +233,24 @@ const page = ref({ current: 1, size: 10, total: 0 })
 const dialogBizReqList = computed(() => {
   if (isEdit.value) return bizReqList.value
   return bizReqList.value.filter(item => item.status !== 'completed')
+})
+
+const { historyMap, loadHistory, saveHistory } = useInputHistory('prod-requirement', {
+  bizReqId: {
+    limit: 3,
+    getLabel: (value, form) => {
+      const item = bizReqList.value.find(b => b.id === value)
+      return item ? `${item.reqCode}-${item.reqName}` : String(value)
+    }
+  },
+  systemId: {
+    limit: 5,
+    getLabel: (value, form) => {
+      const item = appSystemList.value.find(s => s.id === value)
+      return item ? item.systemName : String(value)
+    }
+  },
+  developer: { limit: 5 }
 })
 
 const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
@@ -315,6 +363,7 @@ const handleSubmit = async () => {
       await request.post('/prod-requirement', form.value)
       ElMessage.success('新增成功')
     }
+    saveHistory(form.value)
     dialogVisible.value = false
     fetchList()
     fetchAppSystems()
@@ -336,6 +385,7 @@ const handleDelete = async (row) => {
 
 onMounted(() => {
   loadColWidths()
+  loadHistory()
   fetchList()
   fetchBizReqList()
   fetchAppSystems()

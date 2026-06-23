@@ -165,11 +165,11 @@
           <div v-if="historyMap.proposer.length" style="margin-top: 6px;">
             <el-tag
               v-for="item in historyMap.proposer"
-              :key="item"
+              :key="item.value"
               size="small"
               style="margin-right: 6px; margin-bottom: 4px; cursor: pointer;"
-              @click="form.proposer = item"
-            >{{ item }}</el-tag>
+              @click="form.proposer = item.value"
+            >{{ item.label }}</el-tag>
           </div>
         </el-form-item>
         <el-form-item label="提出部门" prop="proposerDept">
@@ -177,11 +177,11 @@
           <div v-if="historyMap.proposerDept.length" style="margin-top: 6px;">
             <el-tag
               v-for="item in historyMap.proposerDept"
-              :key="item"
+              :key="item.value"
               size="small"
               style="margin-right: 6px; margin-bottom: 4px; cursor: pointer;"
-              @click="form.proposerDept = item"
-            >{{ item }}</el-tag>
+              @click="form.proposerDept = item.value"
+            >{{ item.label }}</el-tag>
           </div>
         </el-form-item>
         <el-form-item label="负责人" prop="owner">
@@ -189,11 +189,11 @@
           <div v-if="historyMap.owner.length" style="margin-top: 6px;">
             <el-tag
               v-for="item in historyMap.owner"
-              :key="item"
+              :key="item.value"
               size="small"
               style="margin-right: 6px; margin-bottom: 4px; cursor: pointer;"
-              @click="form.owner = item"
-            >{{ item }}</el-tag>
+              @click="form.owner = item.value"
+            >{{ item.label }}</el-tag>
           </div>
         </el-form-item>
         <el-form-item label="关联批次" prop="batchId">
@@ -318,6 +318,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { useDictStore } from '@/stores/dict'
 import { useColumnWidth } from '@/composables/useColumnWidth'
+import { useInputHistory } from '@/composables/useInputHistory'
 import request from '@/api/request'
 import QuickSelect from '@/components/QuickSelect.vue'
 
@@ -385,45 +386,11 @@ const saveVisibleColumns = () => {
   localStorage.setItem(COLUMN_VISIBLE_KEY, JSON.stringify(visibleColumns.value))
 }
 
-const HISTORY_KEYS = {
-  proposer: 'biz-requirement-history-proposer',
-  proposerDept: 'biz-requirement-history-proposerDept',
-  owner: 'biz-requirement-history-owner'
-}
-const historyMap = ref({
-  proposer: [],
-  proposerDept: [],
-  owner: []
+const { historyMap, loadHistory, saveHistory } = useInputHistory('biz-requirement', {
+  proposer: { limit: 5 },
+  proposerDept: { limit: 5 },
+  owner: { limit: 5 }
 })
-
-const loadHistory = () => {
-  try {
-    Object.keys(HISTORY_KEYS).forEach(key => {
-      const saved = localStorage.getItem(HISTORY_KEYS[key])
-      if (saved) {
-        historyMap.value[key] = JSON.parse(saved)
-      }
-    })
-  } catch (e) {
-    console.error('加载历史记录失败', e)
-  }
-}
-
-const saveHistory = () => {
-  try {
-    const fields = ['proposer', 'proposerDept', 'owner']
-    fields.forEach(field => {
-      const value = form.value[field]?.trim()
-      if (!value) return
-      const list = historyMap.value[field] || []
-      const newList = [value, ...list.filter(item => item !== value)].slice(0, 20)
-      historyMap.value[field] = newList
-      localStorage.setItem(HISTORY_KEYS[field], JSON.stringify(newList))
-    })
-  } catch (e) {
-    console.error('保存历史记录失败', e)
-  }
-}
 
 const form = ref({
   reqCode: '',
@@ -557,7 +524,7 @@ const handleSubmit = async () => {
       await request.post('/biz-requirement', form.value)
       ElMessage.success('新增成功')
     }
-    saveHistory()
+    saveHistory(form.value)
     dialogVisible.value = false
     query.value = { status: '', batchId: '' }
     page.value.current = 1
