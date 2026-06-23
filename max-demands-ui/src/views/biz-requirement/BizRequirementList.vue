@@ -88,9 +88,13 @@
         </el-table-column>
         <el-table-column v-if="visibleColumns.includes('batchNo')" prop="batchNo" label="关联批次" :width="colWidths.batchNo">
           <template #default="{ row }">
-            <span :style="isCurrentMonth(row.batchDate) ? 'color: #F56C6C; font-weight: bold;' : ''">
-              {{ batchList.find(item => item.id === row.batchId)?.batchNo || '-' }}
-            </span>
+            <img
+              v-if="isCurrentMonth(row.batchDate)"
+              src="@/assets/attention.png"
+              alt="注意"
+              style="width: 18px; height: 18px; vertical-align: middle; margin-right: 4px;"
+            />
+            <span>{{ batchList.find(item => item.id === row.batchId)?.batchNo || '-' }}</span>
           </template>
         </el-table-column>
         <el-table-column v-if="visibleColumns.includes('status')" prop="status" label="状态" :width="colWidths.status">
