@@ -7,6 +7,27 @@
     <el-card class="page-card">
       <template #header>
         <div style="display: flex; justify-content: space-between; align-items: center;">
+          <el-button type="primary" class="page-action-btn" @click="handleAdd" v-if="authStore.userInfo?.permissions?.includes('prod:requirement:add')">+ 新增产品需求</el-button>
+        </div>
+      </template>
+
+      <el-form :inline="true" style="margin-bottom: 16px; display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 8px;">
+        <el-form-item label="关联业务需求">
+          <el-select v-model="query.bizReqId" placeholder="请选择" clearable filterable style="width: 260px;">
+            <el-option
+              v-for="item in bizReqList"
+              :key="item.id"
+              :label="`${item.reqCode}-${item.reqName}`"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-checkbox v-model="mineDeveloper" @change="handleMineToggle('developer')" style="margin-right: 8px;">我的</el-checkbox>
+          <el-button type="primary" @click="handleSearch">查询</el-button>
+          <el-button @click="query = { bizReqId: '', developer: '' }; mineDeveloper = false; handleSearch()">重置</el-button>
+        </el-form-item>
+        <el-form-item style="margin-left: auto;">
           <el-select
             v-model="visibleColumns"
             multiple
@@ -23,24 +44,6 @@
               :value="col.prop"
             />
           </el-select>
-          <el-button type="primary" class="page-action-btn" @click="handleAdd" v-if="authStore.userInfo?.permissions?.includes('prod:requirement:add')">+ 新增产品需求</el-button>
-        </div>
-      </template>
-
-      <el-form :inline="true" style="margin-bottom: 16px;">
-        <el-form-item label="关联业务需求">
-          <el-select v-model="query.bizReqId" placeholder="请选择" clearable filterable style="width: 260px;">
-            <el-option
-              v-for="item in bizReqList"
-              :key="item.id"
-              :label="`${item.reqCode}-${item.reqName}`"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="handleSearch">查询</el-button>
-          <el-button @click="query = { bizReqId: '' }; handleSearch()">重置</el-button>
         </el-form-item>
       </el-form>
 
@@ -257,7 +260,8 @@ const submitting = ref(false)
 const formRef = ref()
 const currentId = ref(null)
 
-const query = ref({ bizReqId: '' })
+const query = ref({ bizReqId: '', developer: '' })
+const mineDeveloper = ref(false)
 const page = ref({ current: 1, size: 10, total: 0 })
 
 const dialogBizReqList = computed(() => {
@@ -389,6 +393,10 @@ const fetchDevBranches = async () => {
 const handleSearch = () => {
   page.value.current = 1
   fetchList()
+}
+
+const handleMineToggle = (field) => {
+  query.value[field] = mineDeveloper.value ? (authStore.userInfo?.realName || '') : ''
 }
 
 const handleAdd = () => {

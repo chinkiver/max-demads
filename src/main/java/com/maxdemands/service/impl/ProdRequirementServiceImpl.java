@@ -28,9 +28,10 @@ public class ProdRequirementServiceImpl extends ServiceImpl<ProdRequirementMappe
     private final AppSystemMapper appSystemMapper;
 
     @Override
-    public IPage<ProdRequirementDTO> pageWithBranches(IPage<ProdRequirement> pageParam, Long bizReqId) {
+    public IPage<ProdRequirementDTO> pageWithBranches(IPage<ProdRequirement> pageParam, Long bizReqId, String developer) {
         var query = Wrappers.<ProdRequirement>lambdaQuery()
                 .eq(bizReqId != null, ProdRequirement::getBizReqId, bizReqId)
+                .eq(developer != null && !developer.isEmpty(), ProdRequirement::getDeveloper, developer)
                 .orderByDesc(ProdRequirement::getCreateTime);
         IPage<ProdRequirement> page = page(pageParam, query);
 

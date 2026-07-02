@@ -30,8 +30,9 @@ public class BizRequirementController {
             @RequestParam(defaultValue = "1") Integer current,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) String status,
-            @RequestParam(required = false) Long batchId) {
-        return Result.success(bizRequirementService.pageWithBatch(new Page<>(current, size), status, batchId));
+            @RequestParam(required = false) Long batchId,
+            @RequestParam(required = false) String owner) {
+        return Result.success(bizRequirementService.pageWithBatch(new Page<>(current, size), status, batchId, owner));
     }
 
     @GetMapping("/{id}")

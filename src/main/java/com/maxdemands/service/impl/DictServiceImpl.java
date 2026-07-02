@@ -7,8 +7,10 @@ import com.maxdemands.mapper.DictMapper;
 import com.maxdemands.service.DictService;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,7 +19,9 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     @Override
     public Map<String, List<Dict>> getAllDicts() {
         List<Dict> list = list(Wrappers.<Dict>lambdaQuery().orderByAsc(Dict::getSortOrder));
-        return list.stream().collect(Collectors.groupingBy(Dict::getDictType));
+        return list.stream()
+                .sorted(Comparator.comparingInt(d -> d.getSortOrder() != null ? d.getSortOrder() : 0))
+                .collect(Collectors.groupingBy(Dict::getDictType, LinkedHashMap::new, Collectors.toList()));
     }
 
     @Override

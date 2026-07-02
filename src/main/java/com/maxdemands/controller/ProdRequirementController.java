@@ -21,8 +21,9 @@ public class ProdRequirementController {
     public Result<IPage<ProdRequirementDTO>> page(
             @RequestParam(defaultValue = "1") Integer current,
             @RequestParam(defaultValue = "10") Integer size,
-            @RequestParam(required = false) Long bizReqId) {
-        return Result.success(prodRequirementService.pageWithBranches(new Page<>(current, size), bizReqId));
+            @RequestParam(required = false) Long bizReqId,
+            @RequestParam(required = false) String developer) {
+        return Result.success(prodRequirementService.pageWithBranches(new Page<>(current, size), bizReqId, developer));
     }
 
     @PostMapping

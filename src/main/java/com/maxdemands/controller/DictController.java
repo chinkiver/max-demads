@@ -44,7 +44,9 @@ public class DictController {
     public Result<Void> update(@PathVariable String dictType,
                                @PathVariable String dictCode,
                                @RequestBody Dict dict) {
-        dictService.update(dict, new com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper<Dict>()
+        dictService.update(null, new com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper<Dict>()
+                .set(Dict::getDictName, dict.getDictName())
+                .set(Dict::getSortOrder, dict.getSortOrder())
                 .eq(Dict::getDictType, dictType)
                 .eq(Dict::getDictCode, dictCode));
         return Result.success();

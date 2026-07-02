@@ -38,11 +38,12 @@
             {{ dictStore.getDict('batch_status').find(d => d.dictCode === row.status)?.dictName || row.status }}
           </template>
         </el-table-column>
-        <el-table-column prop="requirements" label="需求" :width="colWidths.requirements">
+        <el-table-column prop="requirements" label="关联投产需求列表" :width="colWidths.requirements">
           <template #default="{ row }">
             <div v-if="row.requirements?.length">
-              <div v-for="req in row.requirements" :key="req.id" style="margin-bottom: 4px;">
-                {{ req.reqCode }}-{{ req.reqName }}
+              <div v-for="(req, index) in row.requirements" :key="req.id" class="req-item">
+                <span class="req-index">{{ index + 1 }}</span>
+                <span>{{ req.reqCode }}-{{ req.reqName }}</span>
               </div>
             </div>
             <span v-else style="color: #999;">-</span>
@@ -388,5 +389,25 @@ onMounted(fetchList)
 }
 :deep(.batch-completed-row .cell) {
   color: #999;
+}
+
+.req-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.req-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #f56c6c;
+  color: #fff;
+  font-size: 12px;
+  margin-right: 8px;
+  flex-shrink: 0;
 }
 </style>

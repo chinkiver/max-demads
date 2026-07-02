@@ -32,19 +32,19 @@ if [ ! -f "$DEPLOY_DIR/$JAR_NAME" ]; then
 fi
 
 # 检查是否已在运行
-PID=$(pgrep -f "java.*$JAR_NAME")
+PID=$(pgrep -f "java.*$JAR_NAME" || true)
 if [ -n "$PID" ]; then
     echo "应用已在运行，PID: $PID"
     exit 0
 fi
 
-# 启动应用
-nohup java -jar "$DEPLOY_DIR/$JAR_NAME" --spring.profiles.active="$PROFILE" > "$LOG_FILE" 2>&1 &
+# 启动应用（日志由 Logback 接管，nohup 输出重定向到 /dev/null 避免生成 nohup.out）
+nohup java -jar "$DEPLOY_DIR/$JAR_NAME" --spring.profiles.active="$PROFILE" > /dev/null 2>&1 &
 
 sleep 5
 
 # 检查启动状态
-NEW_PID=$(pgrep -f "java.*$JAR_NAME")
+NEW_PID=$(pgrep -f "java.*$JAR_NAME" || true)
 if [ -n "$NEW_PID" ]; then
     echo "应用启动成功，PID: $NEW_PID"
     echo "日志文件：$LOG_FILE"

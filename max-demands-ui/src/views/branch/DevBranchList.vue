@@ -20,7 +20,9 @@
         </el-table-column>
         <el-table-column prop="status" label="状态" :width="colWidths.status">
           <template #default="{ row }">
-            {{ dictStore.getDict('branch_status').find(d => d.dictCode === row.status)?.dictName || row.status }}
+            <el-tag :type="getBranchStatusType(row.status)" size="small">
+              {{ dictStore.getDict('branch_status').find(d => d.dictCode === row.status)?.dictName || row.status }}
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="verifyBranchName" label="关联验证分支" :width="colWidths.verifyBranchName" show-overflow-tooltip>
@@ -170,6 +172,15 @@ const formatVerifyBranch = (verifyBranchId) => {
   if (!branch) return verifyBranchId
   const systemName = appSystemList.value.find(s => s.id === branch.systemId)?.systemName || branch.systemId
   return `${branch.branchName}-${systemName}`
+}
+
+const getBranchStatusType = (status) => {
+  const map = {
+    active: 'primary',
+    merged: 'success',
+    closed: 'info'
+  }
+  return map[status] || ''
 }
 
 const groupByBizReq = (prodList) => {

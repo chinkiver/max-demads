@@ -10,5 +10,5 @@ public interface ProdRequirementService extends IService<ProdRequirement> {
     void updateWithBranch(ProdRequirementDTO dto);
     void deleteWithBranch(Long id);
 
-    IPage<ProdRequirementDTO> pageWithBranches(IPage<ProdRequirement> pageParam, Long bizReqId);
+    IPage<ProdRequirementDTO> pageWithBranches(IPage<ProdRequirement> pageParam, Long bizReqId, String developer);
 }

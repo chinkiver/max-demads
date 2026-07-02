@@ -20,7 +20,9 @@
         </el-table-column>
         <el-table-column prop="status" label="状态" :width="colWidths.status">
           <template #default="{ row }">
-            {{ dictStore.getDict('branch_status').find(d => d.dictCode === row.status)?.dictName || row.status }}
+            <el-tag :type="getBranchStatusType(row.status)" size="small">
+              {{ dictStore.getDict('branch_status').find(d => d.dictCode === row.status)?.dictName || row.status }}
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="batchNo" label="关联投产批次" :width="colWidths.batchNo">
@@ -242,6 +244,15 @@ const handleViewRelation = async (row) => {
   } finally {
     relationLoading.value = false
   }
+}
+
+const getBranchStatusType = (status) => {
+  const map = {
+    active: 'primary',
+    merged: 'success',
+    closed: 'info'
+  }
+  return map[status] || ''
 }
 
 const getRelationTypeTag = (type) => {
