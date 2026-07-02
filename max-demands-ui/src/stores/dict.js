@@ -11,7 +11,8 @@ export const useDictStore = defineStore('dict', () => {
   }
 
   const getDict = (type) => {
-    return dicts.value[type] || []
+    const list = dicts.value[type] || []
+    return [...list].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
   }
 
   return { dicts, loadDicts, getDict }

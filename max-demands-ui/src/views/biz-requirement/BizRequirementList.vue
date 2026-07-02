@@ -7,27 +7,11 @@
     <el-card class="page-card">
       <template #header>
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <el-select
-            v-model="visibleColumns"
-            multiple
-            collapse-tags
-            collapse-tags-tooltip
-            placeholder="选择展示字段"
-            style="width: 180px;"
-            @change="saveVisibleColumns"
-          >
-            <el-option
-              v-for="col in columnOptions"
-              :key="col.prop"
-              :label="col.label"
-              :value="col.prop"
-            />
-          </el-select>
           <el-button type="primary" class="page-action-btn" @click="handleAdd" v-if="authStore.userInfo?.permissions?.includes('biz:requirement:add')">+ 新增需求</el-button>
         </div>
       </template>
 
-      <el-form :inline="true" style="margin-bottom: 16px;">
+      <el-form :inline="true" style="margin-bottom: 16px; display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 8px;">
         <el-form-item label="状态">
           <el-select v-model="query.status" placeholder="请选择" clearable style="width: 160px;">
             <el-option
@@ -49,8 +33,27 @@
           </el-select>
         </el-form-item>
         <el-form-item>
+          <el-checkbox v-model="mineOwner" @change="handleMineToggle('owner')" style="margin-right: 8px;">我的</el-checkbox>
           <el-button type="primary" @click="handleSearch">查询</el-button>
-          <el-button @click="query = { status: '', batchId: '' }; handleSearch()">重置</el-button>
+          <el-button @click="query = { status: '', batchId: '', owner: '' }; mineOwner = false; handleSearch()">重置</el-button>
+        </el-form-item>
+        <el-form-item style="margin-left: auto;">
+          <el-select
+            v-model="visibleColumns"
+            multiple
+            collapse-tags
+            collapse-tags-tooltip
+            placeholder="选择展示字段"
+            style="width: 180px;"
+            @change="saveVisibleColumns"
+          >
+            <el-option
+              v-for="col in columnOptions"
+              :key="col.prop"
+              :label="col.label"
+              :value="col.prop"
+            />
+          </el-select>
         </el-form-item>
       </el-form>
 
@@ -199,7 +202,7 @@
         <el-form-item label="关联批次" prop="batchId">
           <QuickSelect
             v-model="form.batchId"
-            api="/batch?current=1&size=100&availableOnly=true"
+            :api="isEdit ? '/batch?current=1&size=100' : '/batch?current=1&size=100&availableOnly=true'"
             create-api="/batch"
             label-key="batchNo"
             placeholder="请选择批次"
@@ -338,7 +341,8 @@ const viewDialogVisible = ref(false)
 const viewRow = ref({})
 const viewProdReqList = ref([])
 
-const query = ref({ status: '', batchId: '' })
+const query = ref({ status: '', batchId: '', owner: '' })
+const mineOwner = ref(false)
 const page = ref({ current: 1, size: 10, total: 0 })
 
 const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
@@ -468,6 +472,10 @@ const fetchBatchList = async () => {
 const handleSearch = () => {
   page.value.current = 1
   fetchList()
+}
+
+const handleMineToggle = (field) => {
+  query.value[field] = mineOwner.value ? (authStore.userInfo?.realName || '') : ''
 }
 
 const handleAdd = () => {

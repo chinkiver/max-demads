@@ -47,8 +47,8 @@
         <el-form-item label="字典名称" prop="dictName">
           <el-input v-model="form.dictName" />
         </el-form-item>
-        <el-form-item label="排序" prop="sort">
-          <el-input-number v-model="form.sort" :min="0" />
+        <el-form-item label="排序" prop="sortOrder">
+          <el-input-number v-model="form.sortOrder" :min="0" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -154,6 +154,7 @@ const handleAdd = () => {
 const handleEdit = (row) => {
   isEdit.value = true
   form.value = {
+    id: row.id,
     dictType: row.dictType,
     dictCode: row.dictCode,
     dictName: row.dictName,
