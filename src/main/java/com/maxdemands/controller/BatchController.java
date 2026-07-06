@@ -34,7 +34,7 @@ public class BatchController {
             @RequestParam(required = false) Boolean availableOnly) {
         var query = Wrappers.<Batch>lambdaQuery()
                 .ge(availableOnly != null && availableOnly, Batch::getBatchDate, LocalDate.now())
-                .orderByDesc(Batch::getBatchDate);
+                .orderByAsc(Batch::getBatchDate);
         return Result.success(batchService.pageWithRequirements(new Page<>(current, size), query));
     }
 

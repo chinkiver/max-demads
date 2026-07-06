@@ -87,10 +87,24 @@ public class BizRequirementServiceImpl extends ServiceImpl<BizRequirementMapper,
     @Override
     public List<BizRequirementOverviewVO> buildOverview() {
         List<BizRequirement> bizList = list(Wrappers.<BizRequirement>lambdaQuery()
+                .ne(BizRequirement::getStatus, "completed")
+                .orderByAsc(BizRequirement::getBatchId)
                 .orderByDesc(BizRequirement::getCreateTime));
         if (bizList.isEmpty()) {
             return List.of();
         }
+
+        List<Long> batchIds = bizList.stream()
+                .map(BizRequirement::getBatchId)
+                .distinct()
+                .toList();
+        List<Batch> batchList = batchIds.isEmpty()
+                ? List.of()
+                : batchMapper.selectList(
+                        Wrappers.<Batch>lambdaQuery()
+                                .in(Batch::getId, batchIds));
+        Map<Long, Batch> batchMap = batchList.stream()
+                .collect(Collectors.toMap(Batch::getId, b -> b));
 
         List<Long> bizIds = bizList.stream().map(BizRequirement::getId).toList();
         List<ProdRequirement> prodList = prodRequirementMapper.selectList(
@@ -143,6 +157,11 @@ public class BizRequirementServiceImpl extends ServiceImpl<BizRequirementMapper,
             vo.setOwner(biz.getOwner());
             vo.setStatus(biz.getStatus());
             vo.setStatusName(dictService.getDictName("biz_req_status", biz.getStatus()));
+            Batch batch = batchMap.get(biz.getBatchId());
+            if (batch != null) {
+                vo.setBatchNo(batch.getBatchNo());
+                vo.setBatchDate(batch.getBatchDate());
+            }
             vo.setProdRequirements(prodList.stream()
                     .filter(p -> biz.getId().equals(p.getBizReqId()))
                     .map(p -> {
