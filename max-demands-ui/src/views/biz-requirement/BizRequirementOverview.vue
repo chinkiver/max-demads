@@ -37,6 +37,12 @@
             <span v-else>-</span>
           </template>
         </el-table-column>
+        <el-table-column prop="batchNo" label="关联批次" :width="colWidths.batchNo">
+          <template #default="{ row }">
+            <el-tag v-if="row.type === 'biz' && row.batchNo" type="warning" size="small">{{ row.batchNo }}</el-tag>
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="systemName" label="所属系统" :width="colWidths.systemName">
           <template #default="{ row }">
             <el-tag v-if="row.type === 'prod' && row.systemName" type="warning" size="small">{{ row.systemName }}</el-tag>
@@ -65,7 +71,8 @@ const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
     name: 300,
     status: 110,
     owner: 130,
-    systemName: 140
+    systemName: 140,
+    batchNo: 180
   }
 )
 
@@ -143,6 +150,7 @@ const buildTree = (list) => {
       owner: biz.owner,
       status: biz.status,
       statusName: biz.statusName,
+      batchNo: biz.batchNo,
       children: (biz.prodRequirements || []).map(prod => {
         const prodNode = {
           id: `prod-${prod.id}`,

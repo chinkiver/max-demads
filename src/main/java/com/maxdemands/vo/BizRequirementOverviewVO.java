@@ -13,6 +13,9 @@ public class BizRequirementOverviewVO {
     private String owner;
     private String status;
     private String statusName;
+    private Long batchId;
+    private String batchNo;
+    private java.time.LocalDate batchDate;
     private List<ProdRequirementNode> prodRequirements;
 
     @Data

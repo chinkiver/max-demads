@@ -30,6 +30,7 @@ public class BizRequirementServiceImpl extends ServiceImpl<BizRequirementMapper,
     @Override
     public IPage<BizRequirementVO> pageWithBatch(IPage<BizRequirement> pageParam, String status, Long batchId, String owner) {
         var query = Wrappers.<BizRequirement>lambdaQuery()
+                .ne(BizRequirement::getStatus, "completed")
                 .eq(status != null && !status.isEmpty(), BizRequirement::getStatus, status)
                 .eq(batchId != null, BizRequirement::getBatchId, batchId)
                 .eq(owner != null && !owner.isEmpty(), BizRequirement::getOwner, owner)
@@ -86,10 +87,37 @@ public class BizRequirementServiceImpl extends ServiceImpl<BizRequirementMapper,
     @Override
     public List<BizRequirementOverviewVO> buildOverview() {
         List<BizRequirement> bizList = list(Wrappers.<BizRequirement>lambdaQuery()
+                .ne(BizRequirement::getStatus, "completed")
+                .orderByAsc(BizRequirement::getBatchId)
                 .orderByDesc(BizRequirement::getCreateTime));
+        return buildOverviewFrom(bizList);
+    }
+
+    @Override
+    public List<BizRequirementOverviewVO> buildOverviewCompleted() {
+        List<BizRequirement> bizList = list(Wrappers.<BizRequirement>lambdaQuery()
+                .eq(BizRequirement::getStatus, "completed")
+                .orderByAsc(BizRequirement::getBatchId)
+                .orderByDesc(BizRequirement::getCreateTime));
+        return buildOverviewFrom(bizList);
+    }
+
+    private List<BizRequirementOverviewVO> buildOverviewFrom(List<BizRequirement> bizList) {
         if (bizList.isEmpty()) {
             return List.of();
         }
+
+        List<Long> batchIds = bizList.stream()
+                .map(BizRequirement::getBatchId)
+                .distinct()
+                .toList();
+        List<Batch> batchList = batchIds.isEmpty()
+                ? List.of()
+                : batchMapper.selectList(
+                        Wrappers.<Batch>lambdaQuery()
+                                .in(Batch::getId, batchIds));
+        Map<Long, Batch> batchMap = batchList.stream()
+                .collect(Collectors.toMap(Batch::getId, b -> b));
 
         List<Long> bizIds = bizList.stream().map(BizRequirement::getId).toList();
         List<ProdRequirement> prodList = prodRequirementMapper.selectList(
@@ -142,6 +170,11 @@ public class BizRequirementServiceImpl extends ServiceImpl<BizRequirementMapper,
             vo.setOwner(biz.getOwner());
             vo.setStatus(biz.getStatus());
             vo.setStatusName(dictService.getDictName("biz_req_status", biz.getStatus()));
+            Batch batch = batchMap.get(biz.getBatchId());
+            if (batch != null) {
+                vo.setBatchNo(batch.getBatchNo());
+                vo.setBatchDate(batch.getBatchDate());
+            }
             vo.setProdRequirements(prodList.stream()
                     .filter(p -> biz.getId().equals(p.getBizReqId()))
                     .map(p -> {
@@ -182,9 +215,18 @@ public class BizRequirementServiceImpl extends ServiceImpl<BizRequirementMapper,
     }
 
     @Override
-    public List<BizRequirementOverviewVO> buildOverviewCompleted() {
-        return buildOverview().stream()
-                .filter(vo -> "completed".equals(vo.getStatus()))
+    public List<Map<String, Object>> countByStatus() {
+        return baseMapper.selectList(Wrappers.<BizRequirement>lambdaQuery().select(BizRequirement::getStatus))
+                .stream()
+                .collect(Collectors.groupingBy(BizRequirement::getStatus, Collectors.counting()))
+                .entrySet()
+                .stream()
+                .map(e -> {
+                    Map<String, Object> map = new java.util.HashMap<>();
+                    map.put("status", e.getKey());
+                    map.put("count", e.getValue());
+                    return map;
+                })
                 .toList();
     }
 }

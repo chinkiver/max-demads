@@ -14,4 +14,9 @@ public interface BizRequirementService extends IService<BizRequirement> {
     List<BizRequirementOverviewVO> buildOverview();
 
     List<BizRequirementOverviewVO> buildOverviewCompleted();
+
+    /**
+     * 按状态统计业务需求数量
+     */
+    List<java.util.Map<String, Object>> countByStatus();
 }
