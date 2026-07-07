@@ -92,15 +92,16 @@ const handleLogin = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #f5f7fa;
+  background: var(--layout-bg);
 }
 
 .login-card {
   width: 420px;
-  background: white;
-  border-radius: 20px;
+  background: var(--card-bg);
+  border-radius: 0;
   padding: 48px 40px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+  border: 3px solid #000;
+  box-shadow: 8px 8px 0 #000;
 }
 
 .login-logo {
@@ -113,30 +114,55 @@ const handleLogin = async () => {
 .logo-icon {
   width: 64px;
   height: 64px;
-  background: #6366f1;
-  border-radius: 16px;
+  background: var(--accent-yellow);
+  border: 3px solid #000;
+  box-shadow: 5px 5px 0 #000;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.45);
 }
 
 .login-title {
   text-align: center;
   font-size: 26px;
-  font-weight: 700;
-  color: #111827;
+  font-weight: 800;
+  color: var(--text-dark);
   margin: 0 0 32px 0;
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.15);
 }
 
 .login-form :deep(.el-input__inner) {
   height: 44px;
 }
 
+:deep(.el-input__wrapper) {
+  box-shadow: 0 0 0 2px #000 inset !important;
+  border-radius: 0 !important;
+  background: white;
+}
+
+:deep(.el-button--primary) {
+  background: var(--accent-pink);
+  border-color: #000;
+  box-shadow: 4px 4px 0 #000;
+  color: #1a1a1a;
+  font-weight: 700;
+}
+
+:deep(.el-button--primary:hover) {
+  background: #ff4a86;
+  border-color: #000;
+}
+
+:deep(.el-button--primary:active) {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #000;
+}
+
 .input-label {
   font-size: 14px;
-  font-weight: 500;
-  color: #374151;
+  font-weight: 700;
+  color: var(--text-dark);
   margin-bottom: 6px;
 }
 </style>

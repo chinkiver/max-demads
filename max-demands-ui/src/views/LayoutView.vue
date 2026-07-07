@@ -198,14 +198,15 @@ const handleCommand = (cmd) => {
 <style scoped>
 .layout-container {
   height: 100vh;
-  background: #f5f7fa;
+  background: var(--main-bg);
 }
 
 .sidebar {
-  background: white;
+  background: var(--sidebar-bg);
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.04);
+  border-right: 2px solid #000;
+  box-shadow: 4px 0 0 #000;
   z-index: 10;
 }
 
@@ -215,24 +216,25 @@ const handleCommand = (cmd) => {
   align-items: center;
   gap: 12px;
   padding: 0 20px;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 2px solid #000;
+  background: var(--sidebar-bg);
 }
 
 .logo-icon {
   width: 38px;
   height: 38px;
-  background: #6366f1;
-  border-radius: 10px;
+  background: #1a1a1a;
+  border: 2px solid #000;
+  box-shadow: 3px 3px 0 #000;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
 }
 
 .logo-text {
   font-size: 18px;
-  font-weight: 700;
-  color: #111827;
+  font-weight: 800;
+  color: #1a1a1a;
 }
 
 .sidebar-menu-wrapper {
@@ -243,12 +245,12 @@ const handleCommand = (cmd) => {
 
 .menu-section-title {
   font-size: 11px;
-  font-weight: 600;
-  color: #9ca3af;
+  font-weight: 800;
+  color: rgba(0,0,0,0.6);
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 1px;
   padding: 0 12px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .sidebar-menu {
@@ -256,44 +258,69 @@ const handleCommand = (cmd) => {
   background: transparent;
 }
 
-.sidebar-menu :deep(.el-menu-item) {
+:deep(.el-sub-menu__title) {
+  color: var(--text-dark);
+  font-weight: 700;
+  border-radius: 0;
   height: 44px;
   line-height: 44px;
-  border-radius: 10px;
   margin-bottom: 4px;
-  color: #4b5563;
-  font-weight: 500;
+}
+
+:deep(.el-sub-menu__title:hover) {
+  background: rgba(0,0,0,0.08);
+}
+
+:deep(.el-sub-menu.is-active .el-sub-menu__title) {
+  background: rgba(0,0,0,0.1);
+  font-weight: 800;
+}
+
+.sidebar-menu :deep(.el-menu-item) {
+  height: 42px;
+  line-height: 42px;
+  border-radius: 0;
+  margin-bottom: 4px;
+  color: var(--text-dark);
+  font-weight: 600;
+  border: 2px solid transparent;
 }
 
 .sidebar-menu :deep(.el-menu-item:hover) {
-  background: #f3f4f6;
+  background: rgba(0,0,0,0.08);
+  border-color: var(--card-border);
+  box-shadow: 3px 3px 0 var(--card-border);
 }
 
 .sidebar-menu :deep(.el-menu-item.is-active) {
-  background: #eef2ff;
-  color: #6366f1;
+  background: var(--accent-yellow);
+  color: var(--text-dark);
+  border: 2px solid var(--card-border);
+  box-shadow: 3px 3px 0 var(--card-border);
+  font-weight: 800;
 }
 
 .sidebar-menu :deep(.el-menu-item .el-icon) {
-  color: #9ca3af;
+  color: var(--text-dark);
 }
 
 .sidebar-menu :deep(.el-menu-item.is-active .el-icon) {
-  color: #6366f1;
+  color: var(--text-dark);
 }
 
 .main-container {
-  background: #f5f7fa;
+  background: var(--main-bg);
 }
 
 .main-header {
   height: 72px;
-  background: white;
+  background: var(--main-bg);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 28px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  border-bottom: 2px solid #000;
+  box-shadow: 0 4px 0 #000;
 }
 
 .header-left {
@@ -303,14 +330,14 @@ const handleCommand = (cmd) => {
 }
 
 .menu-toggle {
-  color: #6b7280;
+  color: #e5e5e5;
   cursor: pointer;
 }
 
 .page-title {
   font-size: 18px;
-  font-weight: 600;
-  color: #111827;
+  font-weight: 800;
+  color: white;
 }
 
 .header-right {
@@ -324,12 +351,13 @@ const handleCommand = (cmd) => {
 }
 
 .header-search :deep(.el-input__wrapper) {
-  border-radius: 20px;
-  background: #f9fafb;
+  border-radius: 0;
+  background: white;
+  box-shadow: 0 0 0 2px #000 inset !important;
 }
 
 .header-icon {
-  color: #6b7280;
+  color: #e5e5e5;
   cursor: pointer;
 }
 
@@ -338,19 +366,22 @@ const handleCommand = (cmd) => {
   align-items: center;
   gap: 10px;
   cursor: pointer;
+  color: white;
 }
 
 .user-avatar {
-  background: #a855f7;
+  background: var(--accent-pink);
   color: white;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 13px;
+  border: 2px solid #000;
+  box-shadow: 3px 3px 0 #000;
 }
 
 .user-name {
   font-size: 14px;
-  font-weight: 500;
-  color: #374151;
+  font-weight: 700;
+  color: #e5e5e5;
 }
 
 .main-content {
