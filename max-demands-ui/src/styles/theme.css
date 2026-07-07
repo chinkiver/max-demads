@@ -33,6 +33,13 @@ html, body, #app {
   background: var(--layout-bg);
 }
 
+/* 全局禁用 Element Plus 黑色文字提示（show-overflow-tooltip 等） */
+.el-popper.is-dark,
+.el-tooltip__popper.is-dark,
+.el-popper {
+  display: none !important;
+}
+
 /* 按钮 —— 粗黑边框硬阴影 */
 .el-button {
   border: 2px solid var(--card-border) !important;
