@@ -90,6 +90,19 @@ public class BizRequirementServiceImpl extends ServiceImpl<BizRequirementMapper,
                 .ne(BizRequirement::getStatus, "completed")
                 .orderByAsc(BizRequirement::getBatchId)
                 .orderByDesc(BizRequirement::getCreateTime));
+        return buildOverviewFrom(bizList);
+    }
+
+    @Override
+    public List<BizRequirementOverviewVO> buildOverviewCompleted() {
+        List<BizRequirement> bizList = list(Wrappers.<BizRequirement>lambdaQuery()
+                .eq(BizRequirement::getStatus, "completed")
+                .orderByAsc(BizRequirement::getBatchId)
+                .orderByDesc(BizRequirement::getCreateTime));
+        return buildOverviewFrom(bizList);
+    }
+
+    private List<BizRequirementOverviewVO> buildOverviewFrom(List<BizRequirement> bizList) {
         if (bizList.isEmpty()) {
             return List.of();
         }
@@ -202,9 +215,18 @@ public class BizRequirementServiceImpl extends ServiceImpl<BizRequirementMapper,
     }
 
     @Override
-    public List<BizRequirementOverviewVO> buildOverviewCompleted() {
-        return buildOverview().stream()
-                .filter(vo -> "completed".equals(vo.getStatus()))
+    public List<Map<String, Object>> countByStatus() {
+        return baseMapper.selectList(Wrappers.<BizRequirement>lambdaQuery().select(BizRequirement::getStatus))
+                .stream()
+                .collect(Collectors.groupingBy(BizRequirement::getStatus, Collectors.counting()))
+                .entrySet()
+                .stream()
+                .map(e -> {
+                    Map<String, Object> map = new java.util.HashMap<>();
+                    map.put("status", e.getKey());
+                    map.put("count", e.getValue());
+                    return map;
+                })
                 .toList();
     }
 }

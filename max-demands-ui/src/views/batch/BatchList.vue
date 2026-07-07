@@ -7,6 +7,9 @@
     <el-card class="page-card">
       <template #header>
         <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+          <el-checkbox v-model="query.showPast" @change="handleSearch">显示过往批次</el-checkbox>
+          <el-button @click="handleSearch">查询</el-button>
+          <el-button @click="handleReset">重置</el-button>
           <el-button @click="handleAutoUpdate" v-if="authStore.userInfo?.permissions?.includes('batch:edit')">自动更新</el-button>
           <el-button @click="openAutoDialog" v-if="authStore.userInfo?.permissions?.includes('batch:edit')">自动生成批次</el-button>
           <el-button type="primary" class="page-action-btn" @click="handleAdd" v-if="authStore.userInfo?.permissions?.includes('batch:add')">+ 新增批次</el-button>
@@ -226,6 +229,7 @@ const currentId = ref(null)
 const submitting = ref(false)
 const formRef = ref()
 const page = ref({ current: 1, size: 10, total: 0 })
+const query = ref({ showPast: false })
 
 const form = ref({
   batchType: '',
@@ -277,12 +281,29 @@ const rowClassName = ({ row }) => {
 const fetchList = async () => {
   loading.value = true
   try {
-    const res = await request.get('/batch', { params: page.value })
+    const params = { ...page.value }
+    if (!query.value.showPast) {
+      params.availableOnly = true
+    } else {
+      params.availableOnly = false
+    }
+    const res = await request.get('/batch', { params })
     list.value = res.data?.records || []
     page.value.total = res.data?.total || 0
   } finally {
     loading.value = false
   }
+}
+
+const handleSearch = () => {
+  page.value.current = 1
+  fetchList()
+}
+
+const handleReset = () => {
+  query.value.showPast = false
+  page.value.current = 1
+  fetchList()
 }
 
 const handleAdd = () => {

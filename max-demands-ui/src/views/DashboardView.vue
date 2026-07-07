@@ -51,14 +51,25 @@
         </el-card>
       </el-col>
     </el-row>
+
+    <el-row :gutter="20" style="margin-top: 20px;">
+      <el-col :span="12">
+        <el-card>
+          <template #header>业务需求状态分布</template>
+          <v-chart :option="statusChartOption" autoresize style="height: 350px;" />
+        </el-card>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue'
+import { reactive, onMounted, ref } from 'vue'
 import request from '@/api/request'
+import { useDictStore } from '@/stores/dict'
 import { Document, DocumentCopy, Share, Calendar } from '@element-plus/icons-vue'
 
+const dictStore = useDictStore()
 const stats = reactive({
   bizReqCount: 0,
   prodReqCount: 0,
@@ -66,8 +77,44 @@ const stats = reactive({
   batchCount: 0
 })
 
+const statusChartOption = ref({})
+
+const loadStatusChart = async () => {
+  const res = await request.get('/biz-requirement/count-by-status')
+  const data = res.data || []
+  const statusDict = dictStore.getDict('biz_req_status')
+  const chartData = data.map(item => {
+    const dict = statusDict.find(d => d.dictCode === item.status)
+    return {
+      name: dict?.dictName || item.status,
+      value: item.count
+    }
+  })
+
+  statusChartOption.value = {
+    tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+    legend: { orient: 'vertical', left: 'left' },
+    series: [
+      {
+        name: '业务需求状态',
+        type: 'pie',
+        radius: '60%',
+        data: chartData,
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        }
+      }
+    ]
+  }
+}
+
 onMounted(async () => {
   try {
+    await dictStore.loadDicts()
     const [bizRes, prodRes, devRes, batchRes] = await Promise.all([
       request.get('/biz-requirement?current=1&size=1'),
       request.get('/prod-requirement?current=1&size=1'),
@@ -78,6 +125,7 @@ onMounted(async () => {
     stats.prodReqCount = prodRes.data.total || 0
     stats.devBranchCount = devRes.data.total || 0
     stats.batchCount = batchRes.data.total || 0
+    await loadStatusChart()
   } catch (e) {
     console.error('加载统计数据失败', e)
   }

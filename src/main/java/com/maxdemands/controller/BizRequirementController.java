@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/biz-requirement")
@@ -83,5 +84,11 @@ public class BizRequirementController {
     @PreAuthorize("hasAuthority('biz:requirement:completed:list')")
     public Result<List<BizRequirementOverviewVO>> overviewCompleted() {
         return Result.success(bizRequirementService.buildOverviewCompleted());
+    }
+
+    @GetMapping("/count-by-status")
+    @PreAuthorize("hasAuthority('biz:requirement:list')")
+    public Result<List<Map<String, Object>>> countByStatus() {
+        return Result.success(bizRequirementService.countByStatus());
     }
 }
