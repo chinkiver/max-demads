@@ -16,6 +16,7 @@ public class BizRequirementOverviewVO {
     private Long batchId;
     private String batchNo;
     private java.time.LocalDate batchDate;
+    private java.time.LocalDate productionDate;
     private List<ProdRequirementNode> prodRequirements;
 
     @Data

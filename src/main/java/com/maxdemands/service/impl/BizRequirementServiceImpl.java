@@ -175,6 +175,7 @@ public class BizRequirementServiceImpl extends ServiceImpl<BizRequirementMapper,
                 vo.setBatchNo(batch.getBatchNo());
                 vo.setBatchDate(batch.getBatchDate());
             }
+            vo.setProductionDate(biz.getProductionDate());
             vo.setProdRequirements(prodList.stream()
                     .filter(p -> biz.getId().equals(p.getBizReqId()))
                     .map(p -> {

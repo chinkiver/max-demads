@@ -122,6 +122,7 @@ CREATE TABLE IF NOT EXISTS biz_requirement (
     owner VARCHAR(50) COMMENT '负责人',
     status VARCHAR(20) DEFAULT 'draft' COMMENT '状态',
     batch_id BIGINT COMMENT '所属批次ID',
+    production_date DATE COMMENT '实际投产日期',
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     deleted TINYINT DEFAULT 0 COMMENT '逻辑删除：0-未删除，1-已删除'

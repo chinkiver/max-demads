@@ -37,6 +37,27 @@
             <span v-else>-</span>
           </template>
         </el-table-column>
+        <el-table-column prop="batchNo" label="关联批次" :width="colWidths.batchNo">
+          <template #default="{ row }">
+            <el-tag v-if="row.type === 'biz' && row.batchNo" type="warning" size="small">{{ row.batchNo }}</el-tag>
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="productionDate" label="投产日期" :width="colWidths.productionDate">
+          <template #default="{ row }">
+            <el-date-picker
+              v-if="row.type === 'biz'"
+              v-model="row.productionDate"
+              type="date"
+              value-format="YYYY-MM-DD"
+              placeholder="选择日期"
+              size="small"
+              style="width: 120px;"
+              @change="handleProductionDateChange(row)"
+            />
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="systemName" label="所属系统" :width="colWidths.systemName">
           <template #default="{ row }">
             <el-tag v-if="row.type === 'prod' && row.systemName" type="warning" size="small">{{ row.systemName }}</el-tag>
@@ -62,10 +83,12 @@ const treeData = ref([])
 const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
   'biz-requirement-completed-col-widths',
   {
-    name: 300,
-    status: 110,
-    owner: 130,
-    systemName: 140
+    name: 280,
+    status: 100,
+    owner: 120,
+    batchNo: 150,
+    productionDate: 140,
+    systemName: 130
   }
 )
 
@@ -143,6 +166,9 @@ const buildTree = (list) => {
       owner: biz.owner,
       status: biz.status,
       statusName: biz.statusName,
+      batchNo: biz.batchNo,
+      batchDate: biz.batchDate,
+      productionDate: biz.productionDate,
       children: (biz.prodRequirements || []).map(prod => {
         const prodNode = {
           id: `prod-${prod.id}`,
@@ -191,6 +217,18 @@ const loadData = async () => {
     console.error(e)
   } finally {
     loading.value = false
+  }
+}
+
+const handleProductionDateChange = async (row) => {
+  try {
+    await request.put(`/biz-requirement/${row.id.replace('biz-', '')}/production-date`, {
+      productionDate: row.productionDate
+    })
+    ElMessage.success('投产日期更新成功')
+  } catch (e) {
+    ElMessage.error('更新失败')
+    console.error(e)
   }
 }
 

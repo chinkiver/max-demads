@@ -86,6 +86,18 @@ public class BizRequirementController {
         return Result.success(bizRequirementService.buildOverviewCompleted());
     }
 
+    @PutMapping("/{id}/production-date")
+    @PreAuthorize("hasAuthority('biz:requirement:edit')")
+    public Result<Void> updateProductionDate(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        String productionDate = body.get("productionDate");
+        BizRequirement requirement = new BizRequirement();
+        requirement.setId(id);
+        requirement.setProductionDate(productionDate != null && !productionDate.isEmpty()
+                ? java.time.LocalDate.parse(productionDate) : null);
+        bizRequirementService.updateById(requirement);
+        return Result.success();
+    }
+
     @GetMapping("/count-by-status")
     @PreAuthorize("hasAuthority('biz:requirement:list')")
     public Result<List<Map<String, Object>>> countByStatus() {

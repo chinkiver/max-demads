@@ -61,4 +61,9 @@ public class BizRequirement extends BaseSoftDeleteEntity {
      * 所属批次ID
      */
     private Long batchId;
+
+    /**
+     * 实际投产日期
+     */
+    private java.time.LocalDate productionDate;
 }
