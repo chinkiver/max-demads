@@ -24,9 +24,9 @@ public class AppSystemController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('app:system:add')")
-    public Result<Void> add(@RequestBody AppSystem appSystem) {
+    public Result<AppSystem> add(@RequestBody AppSystem appSystem) {
         appSystemService.save(appSystem);
-        return Result.success();
+        return Result.success(appSystem);
     }
 
     @PutMapping("/{id}")

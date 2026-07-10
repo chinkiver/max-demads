@@ -75,7 +75,7 @@ const props = defineProps({
   options: { type: Array, default: null }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'created'])
 
 const historyEnabled = computed(() => props.createHistoryPrefix && props.createHistoryFields)
 const { historyMap, loadHistory, saveHistory } = historyEnabled.value
@@ -118,7 +118,9 @@ const handleCreate = async () => {
     ElMessage.success('创建成功')
     dialogVisible.value = false
     await fetchList()
-    emit('update:modelValue', res.data?.id || list.value[list.value.length - 1]?.id)
+    const createdId = res.data?.id || list.value[list.value.length - 1]?.id
+    emit('update:modelValue', createdId)
+    emit('created', res.data || createdId)
   } finally {
     creating.value = false
   }

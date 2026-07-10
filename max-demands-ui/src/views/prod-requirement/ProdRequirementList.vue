@@ -159,6 +159,7 @@
             create-history-prefix="app-system-create"
             :create-history-fields="{ businessDept: { label: '归属业务部门', limit: 5 }, owner: { label: '负责人', limit: 5 } }"
             :options="appSystemList"
+            @created="fetchAppSystems"
           >
             <template #create-form="{ form }">
               <el-form-item label="系统名称" prop="systemName">
