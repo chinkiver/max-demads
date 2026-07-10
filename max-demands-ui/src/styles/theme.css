@@ -35,8 +35,7 @@ html, body, #app {
 
 /* 全局禁用 Element Plus 黑色文字提示（show-overflow-tooltip 等） */
 .el-popper.is-dark,
-.el-tooltip__popper.is-dark,
-.el-popper {
+.el-tooltip__popper.is-dark {
   display: none !important;
 }
 
