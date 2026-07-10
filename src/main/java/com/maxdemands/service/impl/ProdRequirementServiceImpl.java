@@ -28,8 +28,10 @@ public class ProdRequirementServiceImpl extends ServiceImpl<ProdRequirementMappe
     private final AppSystemMapper appSystemMapper;
 
     @Override
-    public IPage<ProdRequirementDTO> pageWithBranches(IPage<ProdRequirement> pageParam, Long bizReqId, String developer) {
+    public IPage<ProdRequirementDTO> pageWithBranches(IPage<ProdRequirement> pageParam, Long bizReqId, String developer, Boolean completedOnly) {
         var query = Wrappers.<ProdRequirement>lambdaQuery()
+                .eq(Boolean.TRUE.equals(completedOnly), ProdRequirement::getStatus, "completed")
+                .ne(!Boolean.TRUE.equals(completedOnly), ProdRequirement::getStatus, "completed")
                 .eq(bizReqId != null, ProdRequirement::getBizReqId, bizReqId)
                 .eq(developer != null && !developer.isEmpty(), ProdRequirement::getDeveloper, developer)
                 .orderByDesc(ProdRequirement::getCreateTime);
