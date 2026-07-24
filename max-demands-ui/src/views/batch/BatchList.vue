@@ -16,19 +16,22 @@
         </div>
       </template>
 
-      <el-alert
-        title="批次说明"
-        type="info"
-        :closable="false"
-        style="margin-bottom: 16px;"
-      >
-        <div>常规投产：可投产业务需求或自主优化需求</div>
-        <div>标准投产：只能投产自主优化需求</div>
-      </el-alert>
-
       <el-table :data="list" v-loading="loading" border :row-class-name="rowClassName" @header-dragend="handleHeaderDragend">
         <el-table-column prop="batchNo" label="批次号" :width="colWidths.batchNo" />
-        <el-table-column prop="batchType" label="批次种类" :width="colWidths.batchType">
+        <el-table-column prop="batchType" :width="colWidths.batchType">
+          <template #header>
+            <el-popover placement="bottom-start" trigger="hover" width="280">
+              <template #reference>
+                <span style="display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
+                  批次种类
+                  <el-icon><InfoFilled /></el-icon>
+                </span>
+              </template>
+              <div style="font-weight: bold; margin-bottom: 8px;">批次说明</div>
+              <div>常规投产：业务需求投产</div>
+              <div>标准投产：自主优化需求和生产问题投产</div>
+            </el-popover>
+          </template>
           <template #default="{ row }">
             <el-tag :type="getBatchTypeTag(row.batchType)" size="small">
               {{ dictStore.getDict('batch_type').find(d => d.dictCode === row.batchType)?.dictName || row.batchType }}
