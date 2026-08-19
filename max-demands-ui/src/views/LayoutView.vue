@@ -45,9 +45,6 @@
             <el-menu-item index="/prod-requirement" v-if="hasPermi('prod:requirement:menu')">
               <span>产品需求</span>
             </el-menu-item>
-            <el-menu-item index="/prod-requirement-completed" v-if="hasPermi('prod:requirement:menu')">
-              <span>已完成产品需求</span>
-            </el-menu-item>
           </el-sub-menu>
 
           <el-menu-item index="/dev-branch" v-if="hasPermi('dev_branch:menu')">
@@ -163,7 +160,6 @@ const pageTitle = computed(() => {
     '/biz-requirement-overview': '需求全览',
     '/biz-requirement-completed': '已投产需求',
     '/prod-requirement': '产品需求管理',
-    '/prod-requirement-completed': '已完成产品需求',
     '/dev-branch': '开发分支管理',
     '/verify-branch': '验证分支管理',
     '/batch': '投产批次管理',

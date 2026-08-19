@@ -13,6 +13,10 @@ public class ProdRequirementDTO {
     private String developer;
     private String status;
     private Long bizReqId;
+    /** 关联业务需求编码 */
+    private String bizReqCode;
+    /** 关联业务需求名称 */
+    private String bizReqName;
     private String branchAction;
     private Long devBranchId;
 

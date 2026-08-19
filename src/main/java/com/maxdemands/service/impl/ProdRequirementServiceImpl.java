@@ -5,10 +5,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.maxdemands.dto.ProdRequirementDTO;
 import com.maxdemands.entity.AppSystem;
+import com.maxdemands.entity.BizRequirement;
 import com.maxdemands.entity.DevBranch;
 import com.maxdemands.entity.ProdRequirement;
 import com.maxdemands.entity.VerifyBranch;
 import com.maxdemands.mapper.AppSystemMapper;
+import com.maxdemands.mapper.BizRequirementMapper;
 import com.maxdemands.mapper.DevBranchMapper;
 import com.maxdemands.mapper.ProdRequirementMapper;
 import com.maxdemands.mapper.VerifyBranchMapper;
@@ -26,12 +28,12 @@ public class ProdRequirementServiceImpl extends ServiceImpl<ProdRequirementMappe
     private final DevBranchMapper devBranchMapper;
     private final VerifyBranchMapper verifyBranchMapper;
     private final AppSystemMapper appSystemMapper;
+    private final BizRequirementMapper bizRequirementMapper;
 
     @Override
-    public IPage<ProdRequirementDTO> pageWithBranches(IPage<ProdRequirement> pageParam, Long bizReqId, String developer, Boolean completedOnly) {
+    public IPage<ProdRequirementDTO> pageWithBranches(IPage<ProdRequirement> pageParam, Long bizReqId, String developer, Boolean excludeCompleted) {
         var query = Wrappers.<ProdRequirement>lambdaQuery()
-                .eq(Boolean.TRUE.equals(completedOnly), ProdRequirement::getStatus, "completed")
-                .ne(!Boolean.TRUE.equals(completedOnly), ProdRequirement::getStatus, "completed")
+                .ne(Boolean.TRUE.equals(excludeCompleted), ProdRequirement::getStatus, "completed")
                 .eq(bizReqId != null, ProdRequirement::getBizReqId, bizReqId)
                 .eq(developer != null && !developer.isEmpty(), ProdRequirement::getDeveloper, developer)
                 .orderByDesc(ProdRequirement::getCreateTime);
@@ -46,6 +48,17 @@ public class ProdRequirementServiceImpl extends ServiceImpl<ProdRequirementMappe
                 : appSystemMapper.selectList(
                         Wrappers.<AppSystem>lambdaQuery()
                                 .in(AppSystem::getId, systemIds));
+
+        List<Long> bizReqIds = page.getRecords().stream()
+                .map(ProdRequirement::getBizReqId)
+                .filter(id -> id != null)
+                .distinct()
+                .toList();
+        List<BizRequirement> bizReqList = bizReqIds.isEmpty()
+                ? List.of()
+                : bizRequirementMapper.selectList(
+                        Wrappers.<BizRequirement>lambdaQuery()
+                                .in(BizRequirement::getId, bizReqIds));
 
         return page.convert(prod -> {
             ProdRequirementDTO dto = new ProdRequirementDTO();
@@ -64,6 +77,15 @@ public class ProdRequirementServiceImpl extends ServiceImpl<ProdRequirementMappe
             dto.setDeveloper(prod.getDeveloper());
             dto.setStatus(prod.getStatus());
             dto.setBizReqId(prod.getBizReqId());
+            if (prod.getBizReqId() != null) {
+                bizReqList.stream()
+                        .filter(b -> b.getId().equals(prod.getBizReqId()))
+                        .findFirst()
+                        .ifPresent(b -> {
+                            dto.setBizReqCode(b.getReqCode());
+                            dto.setBizReqName(b.getReqName());
+                        });
+            }
             dto.setBranchAction(prod.getBranchAction());
             dto.setDevBranchId(prod.getDevBranchId());
 

@@ -15,7 +15,7 @@
 
     <groupId>com.maxdemands</groupId>
     <artifactId>max-demands</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <name>max-demands</name>
     <description>需求管理平台后端服务</description>
 
