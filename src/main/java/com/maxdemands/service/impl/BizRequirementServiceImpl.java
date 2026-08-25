@@ -12,6 +12,8 @@ import com.maxdemands.vo.BizRequirementVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -48,34 +50,23 @@ public class BizRequirementServiceImpl extends ServiceImpl<BizRequirementMapper,
                 : batchMapper.selectList(
                         Wrappers.<Batch>lambdaQuery()
                                 .in(Batch::getId, batchIds));
+        Map<Long, Batch> batchMap = batchList.stream()
+                .collect(Collectors.toMap(Batch::getId, b -> b));
 
-        List<BizRequirementVO> records = page.getRecords().stream().map(req -> {
+        // 排序：与 buildOverviewFrom 共用 compareByBatchThenCreateTime，列表 / 全览 顺序永远一致
+        List<BizRequirement> sorted = page.getRecords().stream()
+                .sorted((a, b) -> compareByBatchThenCreateTime(a, b, batchMap))
+                .toList();
+
+        List<BizRequirementVO> records = sorted.stream().map(req -> {
             BizRequirementVO vo = new BizRequirementVO();
             org.springframework.beans.BeanUtils.copyProperties(req, vo);
-            Batch batch = batchList.stream()
-                    .filter(b -> b.getId().equals(req.getBatchId()))
-                    .findFirst()
-                    .orElse(null);
+            Batch batch = batchMap.get(req.getBatchId());
             if (batch != null) {
                 vo.setBatchDate(batch.getBatchDate());
                 vo.setBatchNo(batch.getBatchNo());
             }
             return vo;
-        }).sorted((a, b) -> {
-            int batchCompare;
-            if (a.getBatchDate() == null && b.getBatchDate() == null) {
-                batchCompare = 0;
-            } else if (a.getBatchDate() == null) {
-                batchCompare = 1;
-            } else if (b.getBatchDate() == null) {
-                batchCompare = -1;
-            } else {
-                batchCompare = a.getBatchDate().compareTo(b.getBatchDate());
-            }
-            if (batchCompare != 0) {
-                return batchCompare;
-            }
-            return b.getCreateTime().compareTo(a.getCreateTime());
         }).collect(Collectors.toList());
 
         com.baomidou.mybatisplus.extension.plugins.pagination.Page<BizRequirementVO> resultPage =
@@ -87,18 +78,14 @@ public class BizRequirementServiceImpl extends ServiceImpl<BizRequirementMapper,
     @Override
     public List<BizRequirementOverviewVO> buildOverview() {
         List<BizRequirement> bizList = list(Wrappers.<BizRequirement>lambdaQuery()
-                .ne(BizRequirement::getStatus, "completed")
-                .orderByAsc(BizRequirement::getBatchId)
-                .orderByDesc(BizRequirement::getCreateTime));
+                .ne(BizRequirement::getStatus, "completed"));
         return buildOverviewFrom(bizList);
     }
 
     @Override
     public List<BizRequirementOverviewVO> buildOverviewCompleted() {
         List<BizRequirement> bizList = list(Wrappers.<BizRequirement>lambdaQuery()
-                .eq(BizRequirement::getStatus, "completed")
-                .orderByAsc(BizRequirement::getBatchId)
-                .orderByDesc(BizRequirement::getCreateTime));
+                .eq(BizRequirement::getStatus, "completed"));
         return buildOverviewFrom(bizList);
     }
 
@@ -119,7 +106,14 @@ public class BizRequirementServiceImpl extends ServiceImpl<BizRequirementMapper,
         Map<Long, Batch> batchMap = batchList.stream()
                 .collect(Collectors.toMap(Batch::getId, b -> b));
 
-        List<Long> bizIds = bizList.stream().map(BizRequirement::getId).toList();
+        // 排序：与 pageWithBatch 完全一致 —— batchDate 升序（最近批次靠前、最紧急优先），
+        //       同批次内 createTime 降序（最新创建的在上）。
+        // SQL 不排序，由 Java 用统一 comparator 处理，避免两处逻辑漂移。
+        List<BizRequirement> sortedBizList = bizList.stream()
+                .sorted((a, b) -> compareByBatchThenCreateTime(a, b, batchMap))
+                .toList();
+
+        List<Long> bizIds = sortedBizList.stream().map(BizRequirement::getId).toList();
         List<ProdRequirement> prodList = prodRequirementMapper.selectList(
                 Wrappers.<ProdRequirement>lambdaQuery()
                         .in(ProdRequirement::getBizReqId, bizIds)
@@ -162,7 +156,7 @@ public class BizRequirementServiceImpl extends ServiceImpl<BizRequirementMapper,
         Map<Long, AppSystem> systemMap = systemList.stream()
                 .collect(Collectors.toMap(AppSystem::getId, s -> s));
 
-        return bizList.stream().map(biz -> {
+        return sortedBizList.stream().map(biz -> {
             BizRequirementOverviewVO vo = new BizRequirementOverviewVO();
             vo.setId(biz.getId());
             vo.setReqCode(biz.getReqCode());
@@ -213,6 +207,30 @@ public class BizRequirementServiceImpl extends ServiceImpl<BizRequirementMapper,
                     }).toList());
             return vo;
         }).toList();
+    }
+
+    /**
+     * 业务需求统一排序规则（列表 / 需求全览 共用）：
+     * 1) batchDate 升序 —— 最近批次（最紧急）优先；无批次排到最后
+     * 2) createTime 降序 —— 同批次内最新创建在上
+     */
+    private static int compareByBatchThenCreateTime(BizRequirement a, BizRequirement b, Map<Long, Batch> batchMap) {
+        LocalDate ad = batchMap.get(a.getBatchId()) != null ? batchMap.get(a.getBatchId()).getBatchDate() : null;
+        LocalDate bd = batchMap.get(b.getBatchId()) != null ? batchMap.get(b.getBatchId()).getBatchDate() : null;
+        int batchCompare;
+        if (ad == null && bd == null) {
+            batchCompare = 0;
+        } else if (ad == null) {
+            batchCompare = 1;
+        } else if (bd == null) {
+            batchCompare = -1;
+        } else {
+            batchCompare = ad.compareTo(bd);
+        }
+        if (batchCompare != 0) {
+            return batchCompare;
+        }
+        return b.getCreateTime().compareTo(a.getCreateTime());
     }
 
     @Override

@@ -24,9 +24,7 @@
         </el-table-column>
         <el-table-column prop="status" label="状态" :width="colWidths.status">
           <template #default="{ row }">
-            <el-tag v-if="row.status" :type="getStatusTag(row.type, row.status)" size="small">
-              {{ row.statusName }}
-            </el-tag>
+            <DictTag v-if="row.status" :type="statusDictType(row.type)" :code="row.status" />
             <span v-else>-</span>
           </template>
         </el-table-column>
@@ -75,6 +73,7 @@ import { ElMessage } from 'element-plus'
 import request from '@/api/request'
 import { useDictStore } from '@/stores/dict'
 import { useColumnWidth } from '@/composables/useColumnWidth'
+import DictTag from '@/components/DictTag.vue'
 
 const dictStore = useDictStore()
 const loading = ref(false)
@@ -151,6 +150,12 @@ const getStatusTag = (type, status) => {
   if (type === 'biz') return getBizStatusType(status)
   if (type === 'prod') return getProdStatusType(status)
   return getBranchStatusType(status)
+}
+
+const statusDictType = (type) => {
+  if (type === 'biz') return 'biz_req_status'
+  if (type === 'prod') return 'prod_req_status'
+  return 'branch_status'
 }
 
 const getRowClassName = ({ row }) => {

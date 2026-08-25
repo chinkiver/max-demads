@@ -95,6 +95,7 @@ public class ProdRequirementServiceImpl extends ServiceImpl<ProdRequirementMappe
                 if (devBranch != null) {
                     dto.setDevBranchName(devBranch.getBranchName());
                     dto.setDevBranchStatus(devBranch.getStatus());
+                    dto.setDevBranchVerifyBranchId(devBranch.getVerifyBranchId());
 
                     Long verifyBranchId = devBranch.getVerifyBranchId();
                     if (verifyBranchId != null) {

@@ -20,9 +20,7 @@
         </el-table-column>
         <el-table-column prop="status" label="状态" :width="colWidths.status">
           <template #default="{ row }">
-            <el-tag :type="getBranchStatusType(row.status)" size="small">
-              {{ dictStore.getDict('branch_status').find(d => d.dictCode === row.status)?.dictName || row.status }}
-            </el-tag>
+            <DictTag type="branch_status" :code="row.status" />
           </template>
         </el-table-column>
         <el-table-column prop="batchNo" label="关联投产批次" :width="colWidths.batchNo">
@@ -151,6 +149,7 @@ import { useDictStore } from '@/stores/dict'
 import { useColumnWidth } from '@/composables/useColumnWidth'
 import request from '@/api/request'
 import QuickSelect from '@/components/QuickSelect.vue'
+import DictTag from '@/components/DictTag.vue'
 
 const authStore = useAuthStore()
 const dictStore = useDictStore()
@@ -244,15 +243,6 @@ const handleViewRelation = async (row) => {
   } finally {
     relationLoading.value = false
   }
-}
-
-const getBranchStatusType = (status) => {
-  const map = {
-    active: 'primary',
-    merged: 'success',
-    closed: 'info'
-  }
-  return map[status] || ''
 }
 
 const getRelationTypeTag = (type) => {

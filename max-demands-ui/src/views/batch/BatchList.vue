@@ -33,15 +33,13 @@
             </el-popover>
           </template>
           <template #default="{ row }">
-            <el-tag :type="getBatchTypeTag(row.batchType)" size="small">
-              {{ dictStore.getDict('batch_type').find(d => d.dictCode === row.batchType)?.dictName || row.batchType }}
-            </el-tag>
+            <DictTag type="batch_type" :code="row.batchType" />
           </template>
         </el-table-column>
         <el-table-column prop="batchDate" label="批次日期" :width="colWidths.batchDate" />
         <el-table-column prop="status" label="状态" :width="colWidths.status">
           <template #default="{ row }">
-            {{ dictStore.getDict('batch_status').find(d => d.dictCode === row.status)?.dictName || row.status }}
+            <DictTag type="batch_status" :code="row.status" />
           </template>
         </el-table-column>
         <el-table-column prop="requirements" label="关联投产需求列表" :width="colWidths.requirements">
@@ -126,19 +124,19 @@
                 <el-table-column prop="developer" label="开发人员" min-width="100" />
                 <el-table-column prop="status" label="状态" min-width="100">
                   <template #default="{ row: prod }">
-                    {{ dictStore.getDict('prod_req_status').find(d => d.dictCode === prod.status)?.dictName || prod.status }}
+                    <DictTag type="prod_req_status" :code="prod.status" />
                   </template>
                 </el-table-column>
                 <el-table-column prop="devBranchName" label="开发分支" min-width="140" show-overflow-tooltip />
                 <el-table-column prop="devBranchStatus" label="开发分支状态" min-width="110">
                   <template #default="{ row: prod }">
-                    {{ dictStore.getDict('branch_status').find(d => d.dictCode === prod.devBranchStatus)?.dictName || prod.devBranchStatus || '-' }}
+                    <DictTag type="branch_status" :code="prod.devBranchStatus" />
                   </template>
                 </el-table-column>
                 <el-table-column prop="verifyBranchName" label="验证分支" min-width="140" show-overflow-tooltip />
                 <el-table-column prop="verifyBranchStatus" label="验证分支状态" min-width="110">
                   <template #default="{ row: prod }">
-                    {{ dictStore.getDict('branch_status').find(d => d.dictCode === prod.verifyBranchStatus)?.dictName || prod.verifyBranchStatus || '-' }}
+                    <DictTag type="branch_status" :code="prod.verifyBranchStatus" />
                   </template>
                 </el-table-column>
               </el-table>
@@ -152,12 +150,12 @@
         </el-table-column>
         <el-table-column prop="reqCategory" label="需求种类" min-width="100">
           <template #default="{ row }">
-            {{ dictStore.getDict('req_category').find(d => d.dictCode === row.reqCategory)?.dictName || row.reqCategory }}
+            <DictTag type="req_category" :code="row.reqCategory" />
           </template>
         </el-table-column>
         <el-table-column prop="priority" label="优先级" min-width="100">
           <template #default="{ row }">
-            {{ dictStore.getDict('priority').find(d => d.dictCode === row.priority)?.dictName || row.priority }}
+            <DictTag type="priority" :code="row.priority" />
           </template>
         </el-table-column>
         <el-table-column prop="proposer" label="提出人" min-width="100" />
@@ -165,7 +163,7 @@
         <el-table-column prop="owner" label="负责人" min-width="100" />
         <el-table-column prop="status" label="状态" min-width="100">
           <template #default="{ row }">
-            {{ dictStore.getDict('biz_req_status').find(d => d.dictCode === row.status)?.dictName || row.status }}
+            <DictTag type="biz_req_status" :code="row.status" />
           </template>
         </el-table-column>
       </el-table>
@@ -208,6 +206,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useDictStore } from '@/stores/dict'
 import { useColumnWidth } from '@/composables/useColumnWidth'
 import request from '@/api/request'
+import DictTag from '@/components/DictTag.vue'
 
 const authStore = useAuthStore()
 const dictStore = useDictStore()
@@ -258,16 +257,6 @@ const autoLoading = ref(false)
 const reqDialogVisible = ref(false)
 const reqLoading = ref(false)
 const reqList = ref([])
-
-const getBatchTypeTag = (batchType) => {
-  const map = {
-    routine_production: 'primary',
-    standard_production: 'success',
-    emergency_production: 'danger',
-    special_approval_production: 'warning'
-  }
-  return map[batchType] || ''
-}
 
 const isBatchExpired = (batchDate) => {
   if (!batchDate) return false

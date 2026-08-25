@@ -6,30 +6,45 @@
     </div>
     <el-card class="page-card">
       <template #header>
-        <div style="display: flex; justify-content: flex-end; align-items: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <el-form :inline="true" style="margin: 0;">
+            <el-form-item label="关联需求" style="margin-bottom: 0;">
+              <el-select
+                v-model="query.reqRef"
+                placeholder="按业务需求 / 产品需求筛选"
+                clearable
+                filterable
+                style="width: 360px;"
+                :loading="filterOptionsLoading"
+                @change="handleSearch"
+              >
+                <el-option-group label="业务需求">
+                  <el-option
+                    v-for="b in bizOptions"
+                    :key="'biz-' + b.id"
+                    :label="`${b.reqCode} - ${b.reqName}`"
+                    :value="'biz:' + b.id"
+                  />
+                </el-option-group>
+                <el-option-group label="产品需求">
+                  <el-option
+                    v-for="p in prodOptions"
+                    :key="'prod-' + p.id"
+                    :label="`${p.prodReqCode} - ${p.prodReqName}${p.bizReqCode ? ' (归属 ' + p.bizReqCode + ')' : ''}`"
+                    :value="'prod:' + p.id"
+                  />
+                </el-option-group>
+              </el-select>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 0;">
+              <el-button @click="handleReset">重置</el-button>
+            </el-form-item>
+          </el-form>
           <el-button type="primary" class="page-action-btn" @click="handleAdd" v-if="authStore.userInfo?.permissions?.includes('dev_branch:add')">+ 新增分支</el-button>
         </div>
       </template>
 
       <el-table :data="list" v-loading="loading" border @header-dragend="handleHeaderDragend">
-        <el-table-column prop="branchName" label="分支名" :width="colWidths.branchName" />
-        <el-table-column prop="systemName" label="关联系统" :width="colWidths.systemName">
-          <template #default="{ row }">
-            {{ appSystemList.find(s => s.id === row.systemId)?.systemName || row.systemId }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="status" label="状态" :width="colWidths.status">
-          <template #default="{ row }">
-            <el-tag :type="getBranchStatusType(row.status)" size="small">
-              {{ dictStore.getDict('branch_status').find(d => d.dictCode === row.status)?.dictName || row.status }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="verifyBranchName" label="关联验证分支" :width="colWidths.verifyBranchName" show-overflow-tooltip>
-          <template #default="{ row }">
-            {{ formatVerifyBranch(row.verifyBranchId) }}
-          </template>
-        </el-table-column>
         <el-table-column prop="prodRequirements" label="关联业务及产品需求" :width="colWidths.prodRequirements">
           <template #default="{ row }">
             <div v-if="row.prodRequirements?.length">
@@ -45,6 +60,22 @@
               </div>
             </div>
             <span v-else style="color: #999;">-</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="branchName" label="分支名" :width="colWidths.branchName" />
+        <el-table-column prop="systemName" label="关联系统" :width="colWidths.systemName">
+          <template #default="{ row }">
+            {{ appSystemList.find(s => s.id === row.systemId)?.systemName || row.systemId }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" label="状态" :width="colWidths.status">
+          <template #default="{ row }">
+            <DictTag type="branch_status" :code="row.status" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="verifyBranchName" label="关联验证分支" :width="colWidths.verifyBranchName" show-overflow-tooltip>
+          <template #default="{ row }">
+            {{ formatVerifyBranch(row.verifyBranchId) }}
           </template>
         </el-table-column>
         <el-table-column label="操作" :width="colWidths.operation">
@@ -107,6 +138,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useDictStore } from '@/stores/dict'
 import { useColumnWidth } from '@/composables/useColumnWidth'
 import request from '@/api/request'
+import DictTag from '@/components/DictTag.vue'
 
 const authStore = useAuthStore()
 const dictStore = useDictStore()
@@ -120,16 +152,22 @@ const submitting = ref(false)
 const formRef = ref()
 const currentId = ref(null)
 
+// 筛选条件
+const query = ref({ reqRef: '' })
+const bizOptions = ref([])
+const prodOptions = ref([])
+const filterOptionsLoading = ref(false)
+
 const page = ref({ current: 1, size: 10, total: 0 })
 
 const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
   'dev-branch-col-widths',
   {
-    branchName: 140,
-    systemName: 120,
-    status: 100,
-    verifyBranchName: 200,
-    prodRequirements: 280,
+    prodRequirements: 320,
+    branchName: 180,
+    systemName: 140,
+    status: 110,
+    verifyBranchName: 220,
     operation: 120
   }
 )
@@ -148,12 +186,29 @@ const rules = {
 const fetchList = async () => {
   loading.value = true
   try {
-    const res = await request.get('/dev-branch', { params: page.value })
+    const res = await request.get('/dev-branch', {
+      params: {
+        current: page.value.current,
+        size: page.value.size,
+        ...(query.value.reqRef ? { reqRef: query.value.reqRef } : {})
+      }
+    })
     list.value = res.data?.records || []
     page.value.total = res.data?.total || 0
   } finally {
     loading.value = false
   }
+}
+
+const handleSearch = () => {
+  page.value.current = 1
+  fetchList()
+}
+
+const handleReset = () => {
+  query.value.reqRef = ''
+  page.value.current = 1
+  fetchList()
 }
 
 const fetchAppSystems = async () => {
@@ -166,21 +221,38 @@ const fetchVerifyBranches = async () => {
   verifyBranchList.value = res.data?.records || []
 }
 
+/**
+ * 加载筛选下拉的可选项：业务需求 + 产品需求（含父业务编码）
+ * 两个查询并发；产品需求用 size=500 截断（够用即可，下拉有 filterable 兜底）
+ */
+const loadFilterOptions = async () => {
+  filterOptionsLoading.value = true
+  try {
+    const [bizRes, prodRes] = await Promise.all([
+      request.get('/biz-requirement?current=1&size=1000'),
+      request.get('/prod-requirement?current=1&size=500')
+    ])
+    bizOptions.value = bizRes.data?.records || []
+    // 为 prodOption 补 bizReqCode 用于显示
+    const bizMap = new Map(bizOptions.value.map(b => [b.id, b]))
+    const prodList = prodRes.data?.records || []
+    prodOptions.value = prodList.map(p => ({
+      ...p,
+      bizReqCode: bizMap.get(p.bizReqId)?.reqCode || ''
+    }))
+  } catch (e) {
+    console.error('加载筛选下拉选项失败', e)
+  } finally {
+    filterOptionsLoading.value = false
+  }
+}
+
 const formatVerifyBranch = (verifyBranchId) => {
   if (!verifyBranchId) return '-'
   const branch = verifyBranchList.value.find(v => v.id === verifyBranchId)
   if (!branch) return verifyBranchId
   const systemName = appSystemList.value.find(s => s.id === branch.systemId)?.systemName || branch.systemId
   return `${branch.branchName}-${systemName}`
-}
-
-const getBranchStatusType = (status) => {
-  const map = {
-    active: 'primary',
-    merged: 'success',
-    closed: 'info'
-  }
-  return map[status] || ''
 }
 
 const groupByBizReq = (prodList) => {
@@ -198,6 +270,12 @@ const groupByBizReq = (prodList) => {
     map.get(key).prodList.push(prod)
   })
   return Array.from(map.values())
+}
+
+const handleAdd = () => {
+  currentId.value = null
+  form.value = { branchName: '', status: '', verifyBranchId: null }
+  dialogVisible.value = true
 }
 
 const handleEdit = (row) => {
@@ -228,5 +306,6 @@ onMounted(() => {
   fetchList()
   fetchAppSystems()
   fetchVerifyBranches()
+  loadFilterOptions()
 })
 </script>

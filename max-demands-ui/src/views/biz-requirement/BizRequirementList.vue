@@ -66,14 +66,12 @@
         <el-table-column v-if="visibleColumns.includes('summary')" prop="summary" label="需求概要" :width="colWidths.summary" show-overflow-tooltip />
         <el-table-column v-if="visibleColumns.includes('reqCategory')" prop="reqCategory" label="需求种类" :width="colWidths.reqCategory">
           <template #default="{ row }">
-            {{ dictStore.getDict('req_category').find(d => d.dictCode === row.reqCategory)?.dictName || row.reqCategory }}
+            <DictTag type="req_category" :code="row.reqCategory" />
           </template>
         </el-table-column>
         <el-table-column v-if="visibleColumns.includes('priority')" prop="priority" label="优先级" :width="colWidths.priority">
           <template #default="{ row }">
-            <el-tag :type="getPriorityType(row.priority)" size="small">
-              {{ dictStore.getDict('priority').find(d => d.dictCode === row.priority)?.dictName || row.priority }}
-            </el-tag>
+            <DictTag type="priority" :code="row.priority" />
           </template>
         </el-table-column>
         <el-table-column v-if="visibleColumns.includes('proposer')" prop="proposer" label="提出人/部门" :width="colWidths.proposer">
@@ -109,9 +107,7 @@
         </el-table-column>
         <el-table-column v-if="visibleColumns.includes('status')" prop="status" label="状态" :width="colWidths.status">
           <template #default="{ row }">
-            <el-tag :type="getStatusType(row.status)" size="small">
-              {{ dictStore.getDict('biz_req_status').find(d => d.dictCode === row.status)?.dictName || row.status }}
-            </el-tag>
+            <DictTag type="biz_req_status" :code="row.status" />
           </template>
         </el-table-column>
         <el-table-column label="操作" :width="colWidths.operation" fixed="right" :resizable="false">
@@ -267,13 +263,13 @@
             </el-button>
           </el-descriptions-item>
           <el-descriptions-item label="需求名称">{{ viewRow.reqName }}</el-descriptions-item>
-          <el-descriptions-item label="需求种类">{{ dictStore.getDict('req_category').find(d => d.dictCode === viewRow.reqCategory)?.dictName || viewRow.reqCategory }}</el-descriptions-item>
-          <el-descriptions-item label="优先级">{{ dictStore.getDict('priority').find(d => d.dictCode === viewRow.priority)?.dictName || viewRow.priority }}</el-descriptions-item>
+          <el-descriptions-item label="需求种类"><DictTag type="req_category" :code="viewRow.reqCategory" /></el-descriptions-item>
+          <el-descriptions-item label="优先级"><DictTag type="priority" :code="viewRow.priority" /></el-descriptions-item>
           <el-descriptions-item label="提出人">{{ viewRow.proposer }}</el-descriptions-item>
           <el-descriptions-item label="提出部门">{{ viewRow.proposerDept }}</el-descriptions-item>
           <el-descriptions-item label="负责人">{{ viewRow.owner }}</el-descriptions-item>
           <el-descriptions-item label="关联批次">{{ batchList.find(item => item.id === viewRow.batchId)?.batchNo || '-' }}</el-descriptions-item>
-          <el-descriptions-item label="状态">{{ dictStore.getDict('biz_req_status').find(d => d.dictCode === viewRow.status)?.dictName || viewRow.status }}</el-descriptions-item>
+          <el-descriptions-item label="状态"><DictTag type="biz_req_status" :code="viewRow.status" /></el-descriptions-item>
           <el-descriptions-item label="需求概要">{{ viewRow.summary || '-' }}</el-descriptions-item>
         </el-descriptions>
       </div>
@@ -290,19 +286,19 @@
           <el-table-column prop="developer" label="开发人员" min-width="100" />
           <el-table-column prop="status" label="状态" min-width="100">
             <template #default="{ row }">
-              {{ dictStore.getDict('prod_req_status').find(d => d.dictCode === row.status)?.dictName || row.status }}
+              <DictTag type="prod_req_status" :code="row.status" />
             </template>
           </el-table-column>
           <el-table-column prop="devBranchName" label="开发分支" min-width="160" show-overflow-tooltip />
           <el-table-column prop="devBranchStatus" label="开发分支状态" min-width="110">
             <template #default="{ row }">
-              {{ dictStore.getDict('branch_status').find(d => d.dictCode === row.devBranchStatus)?.dictName || row.devBranchStatus || '-' }}
+              <DictTag type="branch_status" :code="row.devBranchStatus" />
             </template>
           </el-table-column>
           <el-table-column prop="verifyBranchName" label="验证分支" min-width="160" show-overflow-tooltip />
           <el-table-column prop="verifyBranchStatus" label="验证分支状态" min-width="110">
             <template #default="{ row }">
-              {{ dictStore.getDict('branch_status').find(d => d.dictCode === row.verifyBranchStatus)?.dictName || row.verifyBranchStatus || '-' }}
+              <DictTag type="branch_status" :code="row.verifyBranchStatus" />
             </template>
           </el-table-column>
         </el-table>
@@ -324,6 +320,7 @@ import { useColumnWidth } from '@/composables/useColumnWidth'
 import { useInputHistory } from '@/composables/useInputHistory'
 import request from '@/api/request'
 import QuickSelect from '@/components/QuickSelect.vue'
+import DictTag from '@/components/DictTag.vue'
 
 const authStore = useAuthStore()
 const dictStore = useDictStore()
@@ -418,31 +415,6 @@ const rules = {
   owner: [{ required: true, message: '请输入负责人', trigger: 'blur' }],
   batchId: [{ required: true, message: '请选择关联批次', trigger: 'change' }],
   status: [{ required: true, message: '请选择状态', trigger: 'change' }]
-}
-
-const getPriorityType = (priority) => {
-  const map = {
-    urgent: 'danger',
-    high: 'warning',
-    medium: 'primary',
-    low: 'info'
-  }
-  return map[priority] || ''
-}
-
-const getStatusType = (status) => {
-  const map = {
-    draft: 'info',
-    pending: 'warning',
-    assigned: 'primary',
-    in_progress: 'success',
-    system_testing: 'primary',
-    acceptance_testing: 'warning',
-    pending_production: 'danger',
-    completed: 'success',
-    cancelled: 'info'
-  }
-  return map[status] || ''
 }
 
 const isCurrentMonth = (batchDate) => {

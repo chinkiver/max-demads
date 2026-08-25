@@ -22,8 +22,9 @@ public class DevBranchController {
     @PreAuthorize("hasAuthority('dev_branch:list')")
     public Result<IPage<DevBranchVO>> page(
             @RequestParam(defaultValue = "1") Integer current,
-            @RequestParam(defaultValue = "10") Integer size) {
-        return Result.success(devBranchService.pageWithProdRequirements(new Page<>(current, size)));
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(required = false) String reqRef) {
+        return Result.success(devBranchService.pageWithProdRequirements(new Page<>(current, size), reqRef));
     }
 
     @PutMapping("/{id}")

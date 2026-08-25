@@ -28,4 +28,6 @@ public class ProdRequirementDTO {
     private String verifyBranchName;
     /** 关联验证分支状态 */
     private String verifyBranchStatus;
+    /** 关联开发分支关联的验证分支ID */
+    private Long devBranchVerifyBranchId;
 }

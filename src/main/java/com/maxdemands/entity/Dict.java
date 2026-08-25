@@ -31,4 +31,9 @@ public class Dict extends BaseEntity {
      * 排序号
      */
     private Integer sortOrder;
+
+    /**
+     * 颜色标签（#RRGGBB）
+     */
+    private String color;
 }

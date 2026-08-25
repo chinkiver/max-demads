@@ -77,7 +77,7 @@
         </el-table-column>
         <el-table-column v-if="visibleColumns.includes('status')" prop="status" label="状态" :width="colWidths.status">
           <template #default="{ row }">
-            {{ dictStore.getDict('prod_req_status').find(d => d.dictCode === row.status)?.dictName || row.status }}
+            <DictTag type="prod_req_status" :code="row.status" />
           </template>
         </el-table-column>
         <el-table-column v-if="visibleColumns.includes('devBranchName')" prop="devBranchName" label="关联开发分支" show-overflow-tooltip :width="colWidths.devBranchName">
@@ -87,7 +87,7 @@
         </el-table-column>
         <el-table-column v-if="visibleColumns.includes('devBranchStatus')" prop="devBranchStatus" label="开发分支状态" :width="colWidths.devBranchStatus">
           <template #default="{ row }">
-            {{ dictStore.getDict('branch_status').find(d => d.dictCode === row.devBranchStatus)?.dictName || row.devBranchStatus || '-' }}
+            <DictTag type="branch_status" :code="row.devBranchStatus" />
           </template>
         </el-table-column>
         <el-table-column v-if="visibleColumns.includes('verifyBranchName')" prop="verifyBranchName" label="验证分支" show-overflow-tooltip :width="colWidths.verifyBranchName">
@@ -97,12 +97,13 @@
         </el-table-column>
         <el-table-column v-if="visibleColumns.includes('verifyBranchStatus')" prop="verifyBranchStatus" label="验证分支状态" :width="colWidths.verifyBranchStatus">
           <template #default="{ row }">
-            {{ dictStore.getDict('branch_status').find(d => d.dictCode === row.verifyBranchStatus)?.dictName || row.verifyBranchStatus || '-' }}
+            <DictTag type="branch_status" :code="row.verifyBranchStatus" />
           </template>
         </el-table-column>
         <el-table-column label="操作" :width="colWidths.operation" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="handleEdit(row)" v-if="authStore.userInfo?.permissions?.includes('prod:requirement:edit')">编辑</el-button>
+            <el-button type="primary" link @click="handleEditBranch(row)" v-if="row.devBranchId && row.devBranchName && authStore.userInfo?.permissions?.includes('dev_branch:edit')">编辑分支</el-button>
             <el-button type="danger" link @click="handleDelete(row)" v-if="authStore.userInfo?.permissions?.includes('prod:requirement:delete')">删除</el-button>
           </template>
         </el-table-column>
@@ -235,6 +236,38 @@
         <el-button type="primary" @click="handleSubmit" :loading="submitting">保存</el-button>
       </template>
     </el-dialog>
+
+    <el-dialog v-model="branchDialogVisible" title="编辑开发分支" width="500px">
+      <el-form :model="branchForm" ref="branchFormRef" :rules="branchRules" label-width="100px">
+        <el-form-item label="分支名" prop="branchName">
+          <el-input v-model="branchForm.branchName" />
+        </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-select v-model="branchForm.status" placeholder="请选择" style="width: 100%;">
+            <el-option
+              v-for="item in dictStore.getDict('branch_status')"
+              :key="item.dictCode"
+              :label="item.dictName"
+              :value="item.dictCode"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="关联验证分支" prop="verifyBranchId">
+          <el-select v-model="branchForm.verifyBranchId" placeholder="请选择" clearable style="width: 100%;">
+            <el-option
+              v-for="item in verifyBranchList"
+              :key="item.id"
+              :label="`${item.branchName}-${appSystemList.find(s => s.id === item.systemId)?.systemName || item.systemId}`"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="branchDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleBranchSubmit" :loading="branchSubmitting">保存</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -247,6 +280,7 @@ import { useColumnWidth } from '@/composables/useColumnWidth'
 import { useInputHistory } from '@/composables/useInputHistory'
 import request from '@/api/request'
 import QuickSelect from '@/components/QuickSelect.vue'
+import DictTag from '@/components/DictTag.vue'
 
 const authStore = useAuthStore()
 const dictStore = useDictStore()
@@ -255,6 +289,7 @@ const list = ref([])
 const bizReqList = ref([])
 const appSystemList = ref([])
 const devBranchList = ref([])
+const verifyBranchList = ref([])
 const loading = ref(false)
 const dialogVisible = ref(false)
 const isEdit = ref(false)
@@ -333,7 +368,7 @@ const { colWidths, loadColWidths, handleHeaderDragend } = useColumnWidth(
     devBranchStatus: 120,
     verifyBranchName: 150,
     verifyBranchStatus: 120,
-    operation: 180
+    operation: 240
   }
 )
 
@@ -357,6 +392,22 @@ const rules = {
   developer: [{ required: true, message: '请输入开发人员', trigger: 'blur' }],
   status: [{ required: true, message: '请选择状态', trigger: 'change' }],
   branchAction: [{ required: true, message: '请选择开发分支选项', trigger: 'change' }]
+}
+
+const branchDialogVisible = ref(false)
+const branchSubmitting = ref(false)
+const branchFormRef = ref()
+const branchCurrentId = ref(null)
+
+const branchForm = ref({
+  branchName: '',
+  status: '',
+  verifyBranchId: null
+})
+
+const branchRules = {
+  branchName: [{ required: true, message: '请输入分支名', trigger: 'blur' }],
+  status: [{ required: true, message: '请选择状态', trigger: 'change' }]
 }
 
 const appSystemCreateRules = {
@@ -392,6 +443,11 @@ const fetchDevBranches = async () => {
   devBranchList.value = res.data?.records || []
 }
 
+const fetchVerifyBranches = async () => {
+  const res = await request.get('/verify-branch?current=1&size=100')
+  verifyBranchList.value = res.data?.records || []
+}
+
 const handleSearch = () => {
   page.value.current = 1
   fetchList()
@@ -423,6 +479,29 @@ const handleEdit = (row) => {
     devBranchId: row.devBranchId
   }
   dialogVisible.value = true
+}
+
+const handleEditBranch = (row) => {
+  branchCurrentId.value = row.devBranchId
+  branchForm.value = {
+    branchName: row.devBranchName,
+    status: row.devBranchStatus,
+    verifyBranchId: row.devBranchVerifyBranchId
+  }
+  branchDialogVisible.value = true
+}
+
+const handleBranchSubmit = async () => {
+  await branchFormRef.value.validate()
+  branchSubmitting.value = true
+  try {
+    await request.put(`/dev-branch/${branchCurrentId.value}`, branchForm.value)
+    ElMessage.success('分支更新成功')
+    branchDialogVisible.value = false
+    fetchList()
+  } finally {
+    branchSubmitting.value = false
+  }
 }
 
 const handleSubmit = async () => {
@@ -464,5 +543,6 @@ onMounted(() => {
   fetchBizReqList()
   fetchAppSystems()
   fetchDevBranches()
+  fetchVerifyBranches()
 })
 </script>
