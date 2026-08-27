@@ -12,6 +12,12 @@
       </template>
 
       <el-form :inline="true" style="margin-bottom: 16px; display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 8px;">
+        <el-form-item label="需求编码">
+          <el-input v-model="query.reqCode" placeholder="按编码包含查询" clearable style="width: 180px;" @keyup.enter="handleSearch" />
+        </el-form-item>
+        <el-form-item label="需求名称">
+          <el-input v-model="query.reqName" placeholder="按名称模糊查询" clearable style="width: 200px;" @keyup.enter="handleSearch" />
+        </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="query.status" placeholder="请选择" clearable style="width: 160px;">
             <el-option
@@ -35,7 +41,7 @@
         <el-form-item>
           <el-checkbox v-model="mineOwner" @change="handleMineToggle('owner')" style="margin-right: 8px;">我的</el-checkbox>
           <el-button type="primary" @click="handleSearch">查询</el-button>
-          <el-button @click="query = { status: '', batchId: '', owner: '' }; mineOwner = false; handleSearch()">重置</el-button>
+          <el-button @click="query = { reqCode: '', reqName: '', status: '', batchId: '', owner: '' }; mineOwner = false; handleSearch()">重置</el-button>
         </el-form-item>
         <el-form-item style="margin-left: auto;">
           <el-select
@@ -290,17 +296,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="devBranchName" label="开发分支" min-width="160" show-overflow-tooltip />
-          <el-table-column prop="devBranchStatus" label="开发分支状态" min-width="110">
-            <template #default="{ row }">
-              <DictTag type="branch_status" :code="row.devBranchStatus" />
-            </template>
-          </el-table-column>
           <el-table-column prop="verifyBranchName" label="验证分支" min-width="160" show-overflow-tooltip />
-          <el-table-column prop="verifyBranchStatus" label="验证分支状态" min-width="110">
-            <template #default="{ row }">
-              <DictTag type="branch_status" :code="row.verifyBranchStatus" />
-            </template>
-          </el-table-column>
         </el-table>
       </div>
 
@@ -338,7 +334,7 @@ const viewDialogVisible = ref(false)
 const viewRow = ref({})
 const viewProdReqList = ref([])
 
-const query = ref({ status: '', batchId: '', owner: '' })
+const query = ref({ reqCode: '', reqName: '', status: '', batchId: '', owner: '' })
 const mineOwner = ref(false)
 const page = ref({ current: 1, size: 10, total: 0 })
 
@@ -506,7 +502,7 @@ const handleSubmit = async () => {
     }
     saveHistory(form.value)
     dialogVisible.value = false
-    query.value = { status: '', batchId: '' }
+    query.value = { reqCode: '', reqName: '', status: '', batchId: '', owner: '' }
     page.value.current = 1
     fetchList()
   } finally {

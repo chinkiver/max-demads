@@ -31,11 +31,13 @@ public class ProdRequirementServiceImpl extends ServiceImpl<ProdRequirementMappe
     private final BizRequirementMapper bizRequirementMapper;
 
     @Override
-    public IPage<ProdRequirementDTO> pageWithBranches(IPage<ProdRequirement> pageParam, Long bizReqId, String developer, Boolean excludeCompleted) {
+    public IPage<ProdRequirementDTO> pageWithBranches(IPage<ProdRequirement> pageParam, Long bizReqId, String developer, Boolean excludeCompleted, String prodReqCode, String prodReqName) {
         var query = Wrappers.<ProdRequirement>lambdaQuery()
                 .ne(Boolean.TRUE.equals(excludeCompleted), ProdRequirement::getStatus, "completed")
                 .eq(bizReqId != null, ProdRequirement::getBizReqId, bizReqId)
                 .eq(developer != null && !developer.isEmpty(), ProdRequirement::getDeveloper, developer)
+                .like(prodReqCode != null && !prodReqCode.isEmpty(), ProdRequirement::getProdReqCode, prodReqCode)
+                .like(prodReqName != null && !prodReqName.isEmpty(), ProdRequirement::getProdReqName, prodReqName)
                 .orderByDesc(ProdRequirement::getCreateTime);
         IPage<ProdRequirement> page = page(pageParam, query);
 

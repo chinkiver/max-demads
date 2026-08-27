@@ -23,8 +23,10 @@ public class ProdRequirementController {
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) Long bizReqId,
             @RequestParam(required = false) String developer,
-            @RequestParam(required = false) Boolean excludeCompleted) {
-        return Result.success(prodRequirementService.pageWithBranches(new Page<>(current, size), bizReqId, developer, excludeCompleted));
+            @RequestParam(required = false) Boolean excludeCompleted,
+            @RequestParam(required = false) String prodReqCode,
+            @RequestParam(required = false) String prodReqName) {
+        return Result.success(prodRequirementService.pageWithBranches(new Page<>(current, size), bizReqId, developer, excludeCompleted, prodReqCode, prodReqName));
     }
 
     @PostMapping

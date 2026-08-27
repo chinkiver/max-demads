@@ -12,6 +12,12 @@
       </template>
 
       <el-form :inline="true" style="margin-bottom: 16px; display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 8px;">
+        <el-form-item label="产品需求编码">
+          <el-input v-model="query.prodReqCode" placeholder="按编码包含查询" clearable style="width: 180px;" @keyup.enter="handleSearch" />
+        </el-form-item>
+        <el-form-item label="产品需求名称">
+          <el-input v-model="query.prodReqName" placeholder="按名称模糊查询" clearable style="width: 200px;" @keyup.enter="handleSearch" />
+        </el-form-item>
         <el-form-item label="关联业务需求">
           <el-select v-model="query.bizReqId" placeholder="请选择" clearable filterable style="width: 260px;">
             <el-option
@@ -26,7 +32,7 @@
           <el-checkbox v-model="query.excludeCompleted" style="margin-right: 8px;">排除已完成</el-checkbox>
           <el-checkbox v-model="mineDeveloper" @change="handleMineToggle('developer')" style="margin-right: 8px;">我的</el-checkbox>
           <el-button type="primary" @click="handleSearch">查询</el-button>
-          <el-button @click="query = { bizReqId: '', developer: '', excludeCompleted: false }; mineDeveloper = false; handleSearch()">重置</el-button>
+          <el-button @click="query = { prodReqCode: '', prodReqName: '', bizReqId: '', developer: '', excludeCompleted: false }; mineDeveloper = false; handleSearch()">重置</el-button>
         </el-form-item>
         <el-form-item style="margin-left: auto;">
           <el-select
@@ -297,7 +303,7 @@ const submitting = ref(false)
 const formRef = ref()
 const currentId = ref(null)
 
-const query = ref({ bizReqId: '', developer: '', excludeCompleted: false })
+const query = ref({ prodReqCode: '', prodReqName: '', bizReqId: '', developer: '', excludeCompleted: false })
 const mineDeveloper = ref(false)
 const page = ref({ current: 1, size: 10, total: 0 })
 

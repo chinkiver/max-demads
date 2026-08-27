@@ -135,10 +135,22 @@ const handleLogin = async () => {
   height: 44px;
 }
 
+/* 关键修复：用真实 border 代替 box-shadow inset，
+   避免 Element Plus 的 .el-input__wrapper.is-focus
+   用更高优先级的选择器覆盖 box-shadow 导致边框错位。
+   背景加 !important 锁死白色，focus/hover 状态不再变色。 */
 :deep(.el-input__wrapper) {
-  box-shadow: 0 0 0 2px #000 inset !important;
+  background: white !important;
+  border: 2px solid #000 !important;
   border-radius: 0 !important;
-  background: white;
+  box-shadow: none !important;
+  padding: 1px 4px;
+}
+
+:deep(.el-input__wrapper.is-focus),
+:deep(.el-input__wrapper.is-hovering) {
+  background: white !important;
+  box-shadow: none !important;
 }
 
 :deep(.el-button--primary) {

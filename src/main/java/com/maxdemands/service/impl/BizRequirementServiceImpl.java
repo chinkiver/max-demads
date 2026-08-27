@@ -30,12 +30,14 @@ public class BizRequirementServiceImpl extends ServiceImpl<BizRequirementMapper,
     private final DictService dictService;
 
     @Override
-    public IPage<BizRequirementVO> pageWithBatch(IPage<BizRequirement> pageParam, String status, Long batchId, String owner) {
+    public IPage<BizRequirementVO> pageWithBatch(IPage<BizRequirement> pageParam, String status, Long batchId, String owner, String reqCode, String reqName) {
         var query = Wrappers.<BizRequirement>lambdaQuery()
                 .ne(BizRequirement::getStatus, "completed")
                 .eq(status != null && !status.isEmpty(), BizRequirement::getStatus, status)
                 .eq(batchId != null, BizRequirement::getBatchId, batchId)
                 .eq(owner != null && !owner.isEmpty(), BizRequirement::getOwner, owner)
+                .like(reqCode != null && !reqCode.isEmpty(), BizRequirement::getReqCode, reqCode)
+                .like(reqName != null && !reqName.isEmpty(), BizRequirement::getReqName, reqName)
                 .orderByDesc(BizRequirement::getCreateTime);
 
         IPage<BizRequirement> page = page(pageParam, query);
