@@ -24,6 +24,9 @@
         <mybatis-plus.version>3.5.6</mybatis-plus.version>
         <jjwt.version>0.12.5</jjwt.version>
         <knife4j.version>4.5.0</knife4j.version>
+        <!-- 覆盖 Spring Boot 3.1.12 默认锁的 lombok 1.18.30（旧版不支持 JDK 21+，
+             编译报 TypeTag :: UNKNOWN）。1.18.38 兼容 JDK 25。 -->
+        <lombok.version>1.18.38</lombok.version>
     </properties>
 
     <dependencies>
